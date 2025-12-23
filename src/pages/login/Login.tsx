@@ -1,7 +1,7 @@
 // 登录页
 import React, { useEffect, useState } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Flex, Form, Input } from 'antd';
+import { Button, Flex, Form, Input } from 'antd';
 import style from './login.module.scss'
 import { getCaptchaApi } from '@/services';
 
