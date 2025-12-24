@@ -13,3 +13,23 @@
   padding: 30px;
   border-radius: 10px;
 }
+
+
+.changeCaptcha{
+  position: relative;
+  cursor: pointer;
+  .captcha{
+    width: 90px;
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 10px;
+  }
+  .change{
+    font-size: 12px;
+    color: #ccc;
+    position: absolute;
+    top: 32px;
+    right: 5px;
+  }
+}

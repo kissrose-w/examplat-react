@@ -1,31 +1,67 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 // 登录页
 import React, { useEffect, useState } from 'react'
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input } from 'antd';
+import { LockOutlined, RedoOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Flex, Form, Input, message } from 'antd'
 import style from './login.module.scss'
-import { getCaptchaApi } from '@/services';
+import { getCaptchaApi, toLoginApi } from '@/services'
+import type { LoginParams } from '@/services/type'
+import { API_CODE } from '@/constants'
+import { getToken, setToken } from '@/utils'
+import { useNavigate } from 'react-router-dom'
+import { useUserStore } from '@/store/userStore'
 
 const Login = () => {
 
-  const [captcha, setCaptcha] = useState();
+  const [captcha, setCaptcha] = useState<string>()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const getUserInfo = useUserStore(state => state.getUserInfo)
 
 
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
-  };
+  const onFinish = async (values: LoginParams) => {
+    console.log(values)
+    try {
+      setLoading(true)
+      const res = await toLoginApi(values)
+      console.log(res.data)
+      if(res.data.code === API_CODE.SUCCESS){
+        message.success(res.data.msg)
+        setToken(res.data.data.token)
+        console.log(getToken())
+        getUserInfo()
+        navigate('/')
+      } else if (res.data.code === API_CODE.EXPIRED_CAPTCHA) {
+        message.error(res.data.msg)
+        getCaptcha()
+      } else {
+        message.error(res.data.msg)
+      }
+    } catch (e) {
+      console.log(e)
+      message.error((e as Error).message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getCaptcha = async () => {
     try {
-      const res = await getCaptchaApi();
-      console.log(res)
-      setCaptcha(res.data.data.code);
+      const res = await getCaptchaApi()
+      console.log(res.data)
+      if(res.data.code === API_CODE.SUCCESS){
+        setCaptcha(res.data.data.code)
+      } else {
+        message.error(res.data.msg)
+      }
+      
     } catch (e) {
       console.log(e)
     }
   }
 
   useEffect(() => {
-    getCaptcha();
+    getCaptcha()
   }, [])
 
 
@@ -44,26 +80,29 @@ const Login = () => {
           name="username"
           rules={[{ required: true, message: 'Please input your Username!' }]}
         >
-          <Input prefix={<UserOutlined />} placeholder="Username" />
+          <Input prefix={<UserOutlined />} autoComplete='new-password' placeholder="Username" />
         </Form.Item>
         <Form.Item
           name="password"
           rules={[{ required: true, message: 'Please input your Password!' }]}
         >
-          <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+          <Input prefix={<LockOutlined />} autoComplete='new-password' type="password" placeholder="Password" />
         </Form.Item>
         <Form.Item>
-          <Flex justify="space-between" align="center">
-            <Form.Item name="captcha" noStyle rules={[{required: true, message: '请输入验证码!'}]}>
-              <Input />
+          <Flex justify="space-between" align="center" className={style.changeCaptcha}>
+            <Form.Item name="code" noStyle rules={[{required: true, message: '请输入验证码!'}]}>
+              <Input autoComplete='new-password' placeholder='验证码' />
             </Form.Item>
-            <img src={captcha} />
+            <img className={style.captcha} src={captcha} />
+            <div onClick={() => {
+              getCaptcha()
+            }} className={style.change}><RedoOutlined /><span>换一换</span></div>
           </Flex>
         </Form.Item>
 
         <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            Log in
+          <Button loading={loading} block type="primary" htmlType="submit">
+            登录
           </Button>
         </Form.Item>
       </Form>

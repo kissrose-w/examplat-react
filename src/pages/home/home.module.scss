@@ -1,0 +1,33 @@
+.home{
+  width: 100vw;
+  height: 100vh;
+  .layout{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+.header{
+  text-align: center;
+  color: #fff;
+  height: 48px;
+  padding-inline: 48px;
+  line-height: 64px;
+  background-color: #4096ff;
+}
+
+.sider{
+  text-align: center;
+  line-height: 120px;
+  color: #fff;
+  background-color: #1677ff;
+  .demo_logo_vertical{
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+  }
+}

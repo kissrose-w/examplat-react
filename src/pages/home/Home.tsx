@@ -1,61 +1,72 @@
-// 主页
+// 首页
 
-import React from 'react'
+import React, { useState } from 'react'
+import { Layout, Menu } from 'antd'
+import style from './home.module.scss'
+import {
+  ReadOutlined
+} from '@ant-design/icons'
+import type { MenuProps } from 'antd'
+import { useUserStore } from '@/store/userStore'
 
-import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+const { Header, Sider, Content } = Layout
 
-const {Header, Content, Sider} = Layout
+type MenuItem = Required<MenuProps>['items'][number]
 
-const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem
+}
 
+const items: MenuItem[] = [
+  getItem('Option 1', '1'),
+  getItem('Option 2', '2'),
+  getItem('User', 'sub1','', [
+    getItem('Tom', '3'),
+    getItem('Bill', '4'),
+    getItem('Alex', '5'),
+  ]),
+  getItem('Team', 'sub2', '', [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+  getItem('Files', '9',),
+]
 
 const Home = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+
+  const [collapsed, setCollapsed] = useState(false)
+  const userMenuList = useUserStore(state => state.menuList)
+
+  console.log(userMenuList)
+
   return (
-    <div>
-      <Layout>
-        <Header style={{ display: 'flex', alignItems: 'center' }}>
-          <div className="demo-logo" />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['2']}
-            items={items1}
-            style={{ flex: 1, minWidth: 0 }}
-          />
-        </Header>
+    <div className={style.home}>
+      <Layout className={style.layout}>
+        <Header className={style.header}>
+          <div className={style.demo_logo_vertical} >
+            <ReadOutlined />
+          </div>
+          Header</Header>
+        
         <Layout>
-          <Sider width={200} style={{ background: colorBgContainer }}>
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={['0']}
-              defaultOpenKeys={['sub1']}
-              style={{ height: '100%', borderInlineEnd: 0 }}
-            />
+          <Sider
+            className={style.sider}
+            collapsible
+            collapsed={collapsed}
+            onCollapse={(value) => setCollapsed(value)}
+            width={'16vw'}
+          >
+            
+            <Menu defaultSelectedKeys={['1']} mode="inline" items={items} />
           </Sider>
-          <Layout style={{ padding: '0 24px 24px' }}>
-            <Breadcrumb
-              items={[{ title: 'Home' }, { title: 'List' }, { title: 'App' }]}
-              style={{ margin: '16px 0' }}
-            />
-            <Content
-              style={{
-                padding: 24,
-                margin: 0,
-                minHeight: 280,
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              Content
-            </Content>
-          </Layout>
+          <Content className={style.content}>Content</Content>
         </Layout>
       </Layout>
     </div>
