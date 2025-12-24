@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 // 登录页
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LockOutlined, RedoOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Flex, Form, Input, message } from 'antd'
 import style from './login.module.scss'
 import { getCaptchaApi, toLoginApi } from '@/services'
 import type { LoginParams } from '@/services/type'
 import { API_CODE } from '@/constants'
-import { getToken, setToken } from '@/utils'
+import { setToken } from '@/utils'
 import { useNavigate } from 'react-router-dom'
 import { useUserStore } from '@/store/userStore'
 
@@ -28,7 +27,6 @@ const Login = () => {
       if(res.data.code === API_CODE.SUCCESS){
         message.success(res.data.msg)
         setToken(res.data.data.token)
-        console.log(getToken())
         getUserInfo()
         navigate('/')
       } else if (res.data.code === API_CODE.EXPIRED_CAPTCHA) {
