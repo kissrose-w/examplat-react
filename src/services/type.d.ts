@@ -56,3 +56,28 @@ export type MenuListItem = {
   _id: string
   children?: MenuListItem[]
 }
+
+//页数
+export type Pages = {
+  page: number,
+  pagesize: number
+}
+
+//科目查询list
+export type SearchSubjectList = {
+  id: string,
+  name: string,
+  value: string,
+  creator: string,
+  createTime: number,
+  __v: number
+}
+
+//科目查询
+export type SearchSubject = {
+  total: number,
+  list: SearchSubjectList[],
+  page: number,
+  pagesize: number,
+  totalPage: number
+}

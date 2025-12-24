@@ -4,7 +4,9 @@ import type {
   CaptchaResponse,
   LoginParams,
   LoginResponse,
-  UserInfo
+  UserInfo,
+  Pages,
+  SearchSubject
 } from '@/services/type'
 import request from './request'
 
@@ -23,4 +25,9 @@ export const getUserInfoApi = () => {
 
 export const getUserMenuApi = () => {
   return request.get<BaseResponse<{list: MenuListItem[]}>>('/user/menulist')
+}
+
+//查询科目列表
+export const getSubjectApi = (params: Pages) => {
+  return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
 }
