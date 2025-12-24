@@ -3,10 +3,10 @@ import { Button, Form, Input, Select, Space } from 'antd'
 import style from './Search.module.scss'
 
 const Search = () => {
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  }
+  // const layout = {
+  //   labelCol: { span: 8 },
+  //   wrapperCol: { span: 16 },
+  // }
 
   // const tailLayout = {
   //   wrapperCol: { offset: 16, span: 8 },
@@ -16,31 +16,30 @@ const Search = () => {
 
   const onGenderChange = (value: string) => {
     switch (value) {
-      case 'open':
-        form.setFieldsValue({ note: '开' })
-        break;
-      case 'close':
-        form.setFieldsValue({ note: '关' })
-        break;
-      default:
+    case 'open':
+      form.setFieldsValue({ note: '开' })
+      break
+    case 'close':
+      form.setFieldsValue({ note: '关' })
+      break
+    default:
     }
-  };
+  }
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: unknown) => {
     console.log(values)
-  };
+  }
 
   const onReset = () => {
-    form.resetFields();
-  };
+    form.resetFields()
+  }
   return (
     <div className={style.box}>
-       <Form
+      <Form
         className={style.search}
         form={form}
         name="control-hooks"
         onFinish={onFinish}
-        
       >
         
         <Form.Item name="username" label="用户名" >
@@ -64,11 +63,11 @@ const Search = () => {
             <Button type="primary">
               查询
             </Button>
-            <Button type="primary">
-              创建用户
-            </Button>
             <Button onClick={onReset}>
               重置
+            </Button>
+            <Button type="primary">
+              创建用户
             </Button>
           </Space>
         </Form.Item>

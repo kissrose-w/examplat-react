@@ -1,6 +1,7 @@
-import NotFound from "@/pages/404/NotFound";
-import Home from "@/pages/home/Home";
-import Users from "@/pages/users/Users";
+import NotFound from '@/pages/404/NotFound'
+import Home from '@/pages/home/Home'
+import Login from '@/pages/login/Login'
+import Users from '@/pages/users/Users'
 
 
 const routes = [
@@ -10,7 +11,11 @@ const routes = [
   },
   {
     path: '/users',
-    element: <Users />,
+    element: <Users />, 
+  },
+  {
+    path: '/login',
+    element: <Login />
   },
   {
     path: '*',
