@@ -12,6 +12,7 @@
   "dependencies": {
     "antd": "^6.1.1",
     "axios": "^1.13.2",
+    "classnames": "^2.5.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",
@@ -30,10 +31,7 @@
     "sass": "^1.97.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
-  },
-  "main": "index.js",
-  "repository": "git@github.com:kissrose-w/examplat-react.git",
-  "author": "mlh <1623369197@qq.com>",
-  "license": "MIT"
+    "vite": "^7.2.4",
+    "vite-plugin-eslint": "^1.8.1"
+  }
 }
