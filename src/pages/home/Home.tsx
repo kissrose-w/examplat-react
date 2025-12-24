@@ -10,7 +10,6 @@ import {
   FileTextOutlined
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import { useUserStore } from '@/store/userStore'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 
 const { Header, Sider, Content } = Layout
@@ -34,32 +33,35 @@ function getItem(
 const Home = () => {
 
   const [collapsed, setCollapsed] = useState(false)
-  const userMenuList = useUserStore(state => state.menuList)
+  const [openKeys, setOpenKeys] = useState<string[]>([])
   const navigate = useNavigate()
   const location = useLocation()
 
   // 根据当前路由计算选中的菜单键
-  const selectedKeys: React.Key[] = [location.pathname]
+  const selectedKeys: MenuProps['selectedKeys'] = [location.pathname]
   
-  // 根据当前路由计算展开的菜单键
-  const openKeys: React.Key[] = location.pathname.startsWith('/student') ? ['/student'] : []
-
   // 菜单点击事件
   const handleMenuClick: MenuProps['onClick'] = (e) => {
-    navigate(e.key as string)
+    const key = e.key as string
+    navigate(key)
+    
+    // 点击学生管理时展开子菜单
+    if (key === '/student') {
+      setOpenKeys(['/student'])
+    }
   }
 
   // 菜单展开/收起事件
   const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
-    // 这里可以添加菜单展开/收起的逻辑
+    setOpenKeys(keys)
   }
 
   // 菜单数据
   const items: MenuItem[] = [
     getItem('首页', '/', <ReadOutlined />),
-    getItem('学生管理', '/student', <BookOutlined />, [
-      getItem('考试列表', '/student', <BarsOutlined />),
-      getItem('考试详情', '/student/detail', <FileTextOutlined />),
+    getItem('学生系统', '/student', <BookOutlined />, [
+      getItem('查询学生考试列表', '/student/list', <BarsOutlined />),
+      getItem('查询学生考试详情', '/student/detail', <FileTextOutlined />),
     ]),
   ]
 

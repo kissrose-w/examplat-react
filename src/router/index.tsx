@@ -22,7 +22,7 @@ const routes = [
         path: '/student',
         element: <Student />,
         children: [
-          {path: '/student', element: <Exam_list />},
+          {path: '/student/list', element: <Exam_list />},
           {path: '/student/detail', element: <Exam_detail />}
         ]
       }
