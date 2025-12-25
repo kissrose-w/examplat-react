@@ -1,59 +1,64 @@
 // 首页
 
-import React, { useState } from 'react'
-import { Layout, Menu } from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Layout, Menu, Avatar } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
 import style from './home.module.scss'
-import {
-  ReadOutlined
-} from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { useUserStore } from '@/store/userStore'
+import type { MenuListItem } from '@/services/type'
+import {IconEnum} from '@/constants/icons'
+import { Link, Outlet } from 'react-router-dom'
 
 const { Header, Sider, Content } = Layout
 
-type MenuItem = Required<MenuProps>['items'][number]
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem
+
+const formatList = (list: MenuListItem[]): MenuProps['items'] => {
+  return list.map(item => {
+    const other = item.children ? {
+      children: formatList(item.children)
+    } : {}
+    return {
+      label: item.children ? item.name : <Link to={item.path}>{item.name}</Link>,
+      key: item.path,
+      icon: IconEnum[item.icon],
+      ...other
+    }
+  })
 }
 
-const items: MenuItem[] = [
-  getItem('Option 1', '1'),
-  getItem('Option 2', '2'),
-  getItem('User', 'sub1','', [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', '', [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9',),
-]
 
 const Home = () => {
 
   const [collapsed, setCollapsed] = useState(false)
   const userMenuList = useUserStore(state => state.menuList)
+  const userInfo = useUserStore(state => state.userInfo)
 
   console.log(userMenuList)
+
+  const menuList = useMemo(() => {
+    const baseMenu: MenuProps['items'] = [
+      {
+        label: <Link to='/'>教务平台</Link>,
+        key: '/',
+        icon: IconEnum['block']
+      }
+    ]
+    return baseMenu.concat(formatList(userMenuList)!)
+  }, [userMenuList])
 
   return (
     <div className={style.home}>
       <Layout className={style.layout}>
         <Header className={style.header}>
-          <div className={style.demo_logo_vertical} >
-            <ReadOutlined />
+          <div className="demo-logo-vertical" />
+          
+          <div className={style.user}>
+            <Avatar style={{ backgroundColor: '##6A7DB2' }} icon={<UserOutlined />} />
+            {userInfo?.username}
           </div>
-          Header</Header>
+        </Header>
         
         <Layout>
           <Sider
@@ -61,12 +66,17 @@ const Home = () => {
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
-            width={'16vw'}
+            width={'160px'}
+            theme='light'
           >
             
-            <Menu defaultSelectedKeys={['1']} mode="inline" items={items} />
+            <Menu defaultSelectedKeys={['1']} mode="inline" items={menuList} />
           </Sider>
-          <Content className={style.content}>Content</Content>
+          <Content className={style.content_wrap}>
+            <div className={style.content} >
+              <Outlet />
+            </div>
+          </Content>
         </Layout>
       </Layout>
     </div>
