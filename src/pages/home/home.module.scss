@@ -10,18 +10,28 @@
 
 .header{
   text-align: center;
-  color: #fff;
   height: 48px;
+  font-size: 20px;
   padding-inline: 48px;
-  line-height: 64px;
-  background-color: #4096ff;
+  background: linear-gradient(90deg, #EBF0FB, #F7EEF7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .user{
+    color: rgba($color: #000000, $alpha: .5);
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
 }
 
 .sider{
   text-align: center;
   line-height: 120px;
   color: #fff;
-  background-color: #1677ff;
+  background-color: #EBF0FB;
   .demo_logo_vertical{
     height: 48px;
     margin: 0;
@@ -29,5 +39,18 @@
     font-size: 30px;
     display: flex;
     justify-content: center;
+  }
+}
+
+.content_wrap{
+  padding: 10px;
+  background: rgba($color: #eee, $alpha: .1);
+  overflow: hidden;
+  .content{
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: auto;
   }
 }
