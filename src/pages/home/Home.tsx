@@ -45,7 +45,7 @@ const Home = () => {
         icon: IconEnum['block']
       }
     ]
-    return baseMenu.concat(formatList(userMenuList))
+    return baseMenu.concat(formatList(userMenuList)!)
   }, [userMenuList])
 
   return (
