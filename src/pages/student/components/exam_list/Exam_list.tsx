@@ -18,11 +18,11 @@ const Exam_list = () => {
           },
         ]}
       >
-        <Input placeholder="placeholder" />
+        <Input placeholder="名字" />
       </Form.Item>
       <Form.Item
-        name='1'
-        label='2'
+        name='sex'
+        label='性别'
         rules={[
           {
             required: true,
@@ -35,11 +35,11 @@ const Exam_list = () => {
           options={[
             {
               value: '1',
-              label: 'longlonglonglonglonglonglong',
+              label: '男',
             },
             {
-              value: '2',
-              label: '222',
+              value: '0',
+              label: '女',
             },
           ]}
         />
