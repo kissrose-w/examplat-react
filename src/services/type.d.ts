@@ -66,7 +66,7 @@ export type Pages = {
 
 //科目查询list
 export type SearchSubjectList = {
-  id: string,
+  _id: string,
   name: string,
   value: string,
   creator: string,
@@ -81,4 +81,15 @@ export type SearchSubject = {
   page: number,
   pagesize: number,
   totalPage: number
+}
+
+//创建科目参数
+export type FieldType = {
+  name: string;
+  value: string;
+} 
+
+//创建科目返回值
+export type SubjectCreat = Pick<BaseResponse , 'code'> & {
+  msg: string
 }
