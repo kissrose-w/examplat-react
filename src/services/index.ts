@@ -34,5 +34,5 @@ export const getGroupList = () => {
 
 // 查询试卷列表
 export const getTestPaperList = (params: TestParams) => {
-  return request.post<BaseResponse<TestList>>('/exam/list', params)
+  return request.get<BaseResponse<TestList>>('/exam/list', { params })
 }

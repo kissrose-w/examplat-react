@@ -80,7 +80,7 @@ export type TestListItem = {
   _id: string
 }
 export type TestList = {
-  list: TestListItem
+  list: TestListItem[]
   tottal: number
   totalPage: number
 }
