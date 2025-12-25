@@ -1,78 +1,59 @@
 // 首页
 
-import React, { useState } from 'react'
-import { Layout, Menu } from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Layout, Menu, Avatar } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
 import style from './home.module.scss'
-import {
-  ReadOutlined,
-  BookOutlined,
-  BarsOutlined,
-  FileTextOutlined
-} from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useUserStore } from '@/store/userStore'
+import type { MenuListItem } from '@/services/type'
+import {IconEnum} from '@/constants/icons'
+import { Link, Outlet } from 'react-router-dom'
 
 const { Header, Sider, Content } = Layout
 
-type MenuItem = Required<MenuProps>['items'][number]
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem
+const formatList = (list: MenuListItem[]): MenuProps['items'] => {
+  return list.map(item => {
+    const other = item.children ? {
+      children: formatList(item.children)
+    } : {}
+    return {
+      label: item.children ? item.name : <Link to={item.path}>{item.name}</Link>,
+      key: item.path,
+      icon: IconEnum[item.icon],
+      ...other
+    }
+  })
 }
 
 const Home = () => {
 
   const [collapsed, setCollapsed] = useState(false)
-  const [openKeys, setOpenKeys] = useState<string[]>([])
-  const navigate = useNavigate()
-  const location = useLocation()
+  const userMenuList = useUserStore(state => state.menuList)
+  const userInfo = useUserStore(state => state.userInfo)
 
-  // 根据当前路由计算选中的菜单键
-  const selectedKeys: MenuProps['selectedKeys'] = [location.pathname]
-  
-  // 菜单点击事件
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
-    const key = e.key as string
-    navigate(key)
-    
-    // 点击学生管理时展开子菜单
-    if (key === '/student') {
-      setOpenKeys(['/student'])
-    }
-  }
-
-  // 菜单展开/收起事件
-  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
-    setOpenKeys(keys)
-  }
-
-  // 菜单数据
-  const items: MenuItem[] = [
-    getItem('首页', '/', <ReadOutlined />),
-    getItem('学生系统', '/student', <BookOutlined />, [
-      getItem('查询学生考试列表', '/student/list', <BarsOutlined />),
-      getItem('查询学生考试详情', '/student/detail', <FileTextOutlined />),
-    ]),
-  ]
+  const menuList = useMemo(() => {
+    const baseMenu: MenuProps['items'] = [
+      {
+        label: <Link to='/'>教务平台</Link>,
+        key: '/',
+        icon: IconEnum['block']
+      }
+    ]
+    return baseMenu.concat(formatList(userMenuList)!)
+  }, [userMenuList])
 
   return (
     <div className={style.home}>
       <Layout className={style.layout}>
         <Header className={style.header}>
-          <div className={style.demo_logo_vertical} >
-            <ReadOutlined />
+          <div className="demo-logo-vertical" />
+          
+          <div className={style.user}>
+            <Avatar style={{ backgroundColor: '##6A7DB2' }} icon={<UserOutlined />} />
+            {userInfo?.username}
           </div>
-          Header</Header>
+        </Header>
         
         <Layout>
           <Sider
@@ -80,20 +61,16 @@ const Home = () => {
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
-            width={'16vw'}
+            width={'160px'}
+            theme='light'
           >
             
-            <Menu 
-              mode="inline" 
-              items={items} 
-              selectedKeys={selectedKeys}
-              openKeys={openKeys}
-              onClick={handleMenuClick}
-              onOpenChange={handleOpenChange}
-            />
+            <Menu defaultSelectedKeys={['1']} mode="inline" items={menuList} />
           </Sider>
-          <Content className={style.content}>
-            <Outlet />
+          <Content className={style.content_wrap}>
+            <div className={style.content} >
+              <Outlet />
+            </div>
           </Content>
         </Layout>
       </Layout>
