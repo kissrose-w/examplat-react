@@ -57,3 +57,35 @@ export type MenuListItem = {
   _id: string
   children?: MenuListItem[]
 }
+
+// 试卷列表
+interface Ques {
+  order: number
+  question: string
+  score: number
+  _id: string
+}
+export type TestListItem = {
+  classify: string
+  createdAt: string
+  creator: string
+  description: string
+  duration: number
+  name: string
+  question: Ques[]
+  status: number
+  totalScore: number
+  updatedAt: string
+  __V: number
+  _id: string
+}
+export type TestList = {
+  list: TestListItem
+  tottal: number
+  totalPage: number
+}
+// 试卷参数
+export type TestParams = {
+  page: number
+  pagesize: number
+}

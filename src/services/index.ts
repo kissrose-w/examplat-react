@@ -4,7 +4,9 @@ import type {
   CaptchaResponse,
   LoginParams,
   LoginResponse,
-  UserInfo
+  UserInfo,
+  TestList,
+  TestParams
 } from '@/services/type'
 import request from './request'
 
@@ -23,4 +25,14 @@ export const getUserInfoApi = () => {
 
 export const getUserMenuApi = () => {
   return request.get<BaseResponse<{list: MenuListItem[]}>>('/user/menulist')
+}
+
+// 班级管理接口
+export const getGroupList = () => {
+  return request.get('/manage-group/group-list')
+}
+
+// 查询试卷列表
+export const getTestPaperList = (params: TestParams) => {
+  return request.post<BaseResponse<TestList>>('/exam/list', params)
 }
