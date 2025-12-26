@@ -26,9 +26,9 @@ const CreatePaper = () => {
     <div>
       <ul>
         类型
-        {list.map(item => 
+        {/* {list.map(item => 
           <li>{item.classify}</li>
-        )}
+        )} */}
       </ul>
     </div>
   )

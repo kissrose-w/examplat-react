@@ -4,23 +4,34 @@ import React, { useEffect, useState } from 'react'
 import { Form, Table} from 'antd'
 import type { DataType } from '@/pages/question/createSubject/CreateSubject'
 
+interface List extends TestListItem {
+  key: string
+}
+
 const PaperBank = () => {
-  const [list, setList] = useState<TestListItem[]>([])
+  const [list, setList] = useState<List[]>([])
+  const [loading, setLoading] = useState(false)
+  const getList = async () => {
+    try {
+      setLoading(true)
+      const res = await getTestPaperList({
+        page: 1,
+        pagesize: 10
+      })
+      const data = res.data.data.list.map((item, index) => ({
+        ...item,
+        key: item._id || index.toString()
+      }))
+      console.log(res)
+      setList(data)
+    } catch(e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const getList = async () => {
-      try {
-        const res = await getTestPaperList({
-          page: 1,
-          pagesize: 10
-        })
-        console.log(res)
-        setList(res.data.data.list)
-      } catch(e) {
-        console.log(e)
-      }
-    }
-    
     getList()
   }, [])
 
@@ -34,8 +45,8 @@ const PaperBank = () => {
       fixed: 'left'
     },
     {
-      title: '科目内容',
-      dataIndex: 'value',
+      title: '科目类型',
+      dataIndex: 'classify',
       key: 'value',
       width: 250,
       editable: true,
@@ -44,10 +55,11 @@ const PaperBank = () => {
       title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
-      // render: (_:string) => {
-      //   if (!_) return '-'
-      //   return dayjs(_).utcOffset(8).format('YYYY-MM-DD HH:mm:ss')
-      // },
+      render: (_:string) => {
+        if (!_) return '-'
+        return _
+        // dayjs(_).utcOffset(8).format('YYYY-MM-DD HH:mm:ss')
+      },
     },
     {
       title: '操作',
@@ -72,21 +84,23 @@ const PaperBank = () => {
   ]
   
   return (
-    <Form component={false}>
-      <Table<DataType>
-        // components={{
-        //   body: { cell: EditableCell },
-        // }}
-        bordered
-        dataSource={list}
-        columns={columns}
-        // pagination={pagination}
-        // loading={loading}
-        scroll={{
-          x: 'max-content', // 自适应所有列宽度总和
-        }}
-      />
-    </Form>
+    <div>
+      <Form component={false}>
+        <Table<DataType>
+          // components={{
+          //   body: { cell: EditableCell },
+          // }}
+          bordered
+          dataSource={list}
+          columns={columns}
+          // pagination={pagination}
+          loading={loading}
+          scroll={{
+            x: 'max-content', // 自适应所有列宽度总和
+          }}
+        />
+      </Form>
+    </div>
   )
 }
 
