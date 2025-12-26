@@ -57,3 +57,44 @@ export type MenuListItem = {
   _id: string
   children?: MenuListItem[]
 }
+
+
+// 查询参数
+export type QueryParams = {
+  page: number,
+  pagesize: number
+}
+
+// 考试记录列表
+export type ExaminationList = {
+  list: ExaminationItem[],
+  total: number,
+  totalPage: number
+}
+
+// 考试记录列表项
+export type ExaminationItem = {
+  classify: string
+  createTime: number
+  creator: string
+  endTime: number
+  examId: string
+  examiner: string[]
+  group: string[]
+  name: string
+  questionsList: QuestionItem[]
+  startTime: number
+  status: number
+  __v: number
+  _id: string
+}
+
+export type QuestionItem = {
+  answer: string,
+  classify: string,
+  options: string[],
+  question: string,
+  type: string,
+  __v: number,
+  _id: string
+}
