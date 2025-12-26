@@ -13,7 +13,7 @@
   height: 48px;
   font-size: 20px;
   padding-inline: 48px;
-  background: linear-gradient(90deg, #EBF0FB, #F7EEF7);
+  background: linear-gradient(90deg, #F7EEF7, #EBF0FB);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +31,7 @@
   text-align: center;
   line-height: 120px;
   color: #fff;
-  background-color: #EBF0FB;
+  background-color: #F7EEF7;
   .demo_logo_vertical{
     height: 48px;
     margin: 0;
@@ -39,6 +39,9 @@
     font-size: 30px;
     display: flex;
     justify-content: center;
+  }
+  .menu{
+    background: #F7EEF7;
   }
 }
 

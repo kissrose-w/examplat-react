@@ -50,7 +50,7 @@ const Home = () => {
           <div className="demo-logo-vertical" />
           
           <div className={style.user}>
-            <Avatar style={{ backgroundColor: '##6A7DB2' }} icon={<UserOutlined />} />
+            <Avatar style={{ backgroundColor: '#6A7DB2' }} icon={<UserOutlined />} />
             {userInfo?.username}
           </div>
         </Header>
@@ -65,7 +65,7 @@ const Home = () => {
             theme='light'
           >
             
-            <Menu defaultSelectedKeys={['1']} mode="inline" items={menuList} />
+            <Menu className={style.menu} defaultSelectedKeys={['1']} mode="inline" items={menuList} />
           </Sider>
           <Content className={style.content_wrap}>
             <div className={style.content} >
