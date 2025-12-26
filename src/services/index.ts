@@ -12,7 +12,9 @@ import type {
   Pages,
   SearchSubject,
   FieldType,
-  SubjectCreat
+  SubjectCreat,
+  QuestionType,
+  QuestionTypeValue
 } from '@/services/type'
 import request from './request'
 
@@ -115,10 +117,24 @@ export const getDelSubjectApi = (id:string) => {
 
 //创建科目接口 
 export const getCreateSubjectApi = (params: FieldType) => {
-  return request.post<SubjectCreat>('/classify/create',params)
+  return request.post<SubjectCreat>('/classify/create', params)
 } 
 
 //编辑接口
 export const getEditSubjectApi = (id:string,value:FieldType) =>{
   return request.post<SubjectCreat>('/classify/update',{id,...value})
+}
+//查看题库列表
+export const getQuestionsListApi = (params: Pages & {type?: string}) => {
+  return request.get<BaseResponse<QuestionType>>('/question/list', {params})
+}
+
+//删除题目
+export const getQuestionDelApi = (id: string) => {
+  return request.post<SubjectCreat>('/question/remove', {id})
+}
+
+//查询题目类型
+export const getQuestionTypeApi = () =>{
+  return request.get<BaseResponse<QuestionTypeValue>>('/question/type/list')
 }
