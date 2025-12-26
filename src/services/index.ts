@@ -6,7 +6,11 @@ import type {
   LoginResponse,
   UserInfo,
   TestList,
-  TestParams
+  TestParams,
+  Pages,
+  SearchSubject,
+  FieldType,
+  SubjectCreat
 } from '@/services/type'
 import request from './request'
 
@@ -90,3 +94,17 @@ export const userRoleApi = () => {
 export const roleUpdateApi = (params: string) => {
   return request.post('role/update', params )
 }
+//查询科目列表
+export const getSubjectApi = (params: Pages) => {
+  return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
+}
+
+//删除科目
+export const getDelSubjectApi = (id:string) => {
+  return request.post<SubjectCreat>('/classify/remove',{id})
+}
+
+//创建科目接口 
+export const getCreateSubjectApi = (params: FieldType) => {
+  return request.post<SubjectCreat>('/classify/create',params)
+} 
