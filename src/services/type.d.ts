@@ -39,6 +39,7 @@ export type UserInfo = {
   age: number
   role: string[]
   permission: PermissionItem[]
+  status?: string
 }
 
 // 菜单
