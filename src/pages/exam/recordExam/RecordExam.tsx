@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import style from './record.module.scss'
 import { Button, Table, type TableColumnsType } from 'antd'
 import type { ExaminationItem } from '@/services/type'
-import { createStyles } from 'antd-style'
 
 
 

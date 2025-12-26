@@ -1,0 +1,22 @@
+.box{
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  min-height: 120px;
+  padding: 20px; 
+}
+.search{
+  display: flex;
+  width:100%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 20px;
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+}
+
+
