@@ -72,7 +72,7 @@ export type TestListItem = {
   description: string
   duration: number
   name: string
-  question: Ques[]
+  questions: Ques[]
   status: number
   totalScore: number
   updatedAt: string
@@ -88,4 +88,40 @@ export type TestList = {
 export type TestParams = {
   page: number
   pagesize: number
+}
+
+//创建试卷，试卷科目分类项
+export type ClassifyItem = {
+  _id: string
+  name: string
+  sort: number
+  value: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 科目分类列表
+export type ClassifyList = {
+  list: ClassifyItem[]
+  total: number
+  totalPage: number
+}
+
+// 试卷详情questions
+export type TestDetailQues = {
+  _id: string
+  question: string
+  type: string
+  classify: string
+  answer: string
+  options: string[]
+  desc: string
+  __v: number
+}
+// 试卷详情
+export type TestPaperDetail = {
+  _id: string
+  name: string
+  classify: string
+  questions: TestDetailQues[]
 }

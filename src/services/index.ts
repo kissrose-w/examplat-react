@@ -6,7 +6,9 @@ import type {
   LoginResponse,
   UserInfo,
   TestList,
-  TestParams
+  TestParams,
+  ClassifyList,
+  TestPaperDetail
 } from '@/services/type'
 import request from './request'
 
@@ -35,4 +37,21 @@ export const getGroupList = () => {
 // 查询试卷列表
 export const getTestPaperList = (params: TestParams) => {
   return request.get<BaseResponse<TestList>>('/exam/list', { params })
+}
+
+// 删除试卷
+export const delTestPaper = (id: string) => {
+  return request.post<BaseResponse>('/exam/remove', { id })
+}
+
+// 获取试卷科目
+export const getClassifyList = (params: TestParams) => {
+  return request.get<BaseResponse<ClassifyList>>('/classify/list', { params })
+}
+
+// 试卷详情
+export const getTestPaperDetail = (id: string) => {
+  return request.get<BaseResponse<TestPaperDetail>>('/exam/detail', {
+    params: { id }
+  })
 }

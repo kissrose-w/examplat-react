@@ -8,7 +8,7 @@ import type { MenuProps } from 'antd'
 import { useUserStore } from '@/store/userStore'
 import type { MenuListItem } from '@/services/type'
 import {IconEnum} from '@/constants/icons'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 const { Header, Sider, Content } = Layout
 
@@ -31,6 +31,7 @@ const Home = () => {
   const [collapsed, setCollapsed] = useState(false)
   const userMenuList = useUserStore(state => state.menuList)
   const userInfo = useUserStore(state => state.userInfo)
+  const location = useLocation() // 获取当前路由路径
 
   const menuList = useMemo(() => {
     const baseMenu: MenuProps['items'] = [
@@ -65,7 +66,7 @@ const Home = () => {
             theme='light'
           >
             
-            <Menu defaultSelectedKeys={['1']} mode="inline" items={menuList} />
+            <Menu selectedKeys={[location.pathname]} mode="inline" items={menuList} />
           </Sider>
           <Content className={style.content_wrap}>
             <div className={style.content} >
