@@ -81,7 +81,7 @@ export type TestListItem = {
 }
 export type TestList = {
   list: TestListItem[]
-  tottal: number
+  total: number
   totalPage: number
 }
 // 试卷参数

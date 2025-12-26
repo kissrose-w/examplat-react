@@ -1,29 +1,29 @@
 import { getTestPaperList } from '@/services'
 import type { TestListItem } from '@/services/type'
 import React, { useEffect, useState } from 'react'
-import { Form, Table} from 'antd'
-import type { DataType } from '@/pages/question/createSubject/CreateSubject'
-
-interface List extends TestListItem {
-  key: string
-}
+import { Form, Table, Space, Button, type TableColumnsType} from 'antd'
+import style from './PaperBank.module.scss'
 
 const PaperBank = () => {
-  const [list, setList] = useState<List[]>([])
+  const [list, setList] = useState<TestListItem[]>([])
   const [loading, setLoading] = useState(false)
+  const [total, setTotal] = useState(0)
+  const [params, setParams] = useState({
+    page: 1,
+    pagesize: 5
+  })
+  // 获取试卷列表数据
   const getList = async () => {
     try {
       setLoading(true)
-      const res = await getTestPaperList({
-        page: 1,
-        pagesize: 10
-      })
+      const res = await getTestPaperList(params)
       const data = res.data.data.list.map((item, index) => ({
         ...item,
         key: item._id || index.toString()
       }))
       console.log(res)
       setList(data)
+      setTotal(res.data.data.total)
     } catch(e) {
       console.log(e)
     } finally {
@@ -33,14 +33,13 @@ const PaperBank = () => {
 
   useEffect(() => {
     getList()
-  }, [])
+  }, [params])
 
-  const columns = [
+  const columns: TableColumnsType<TestListItem> = [
     {
       title: '科目名称',
       dataIndex: 'name',
       width: 200,
-      editable: true,
       key: 'name',
       fixed: 'left'
     },
@@ -49,7 +48,6 @@ const PaperBank = () => {
       dataIndex: 'classify',
       key: 'value',
       width: 250,
-      editable: true,
     },
     {
       title: '更新时间',
@@ -58,42 +56,58 @@ const PaperBank = () => {
       render: (_:string) => {
         if (!_) return '-'
         return _
-        // dayjs(_).utcOffset(8).format('YYYY-MM-DD HH:mm:ss')
       },
     },
     {
       title: '操作',
-      dataIndex: 'operation',
       fixed: 'right',
       width: 250,
-      // render: (_:undefined, record: DataType) => {
-      //   return (
-      //     <> 
-      //       <Space>
-      //         <Button color="primary" variant="text" onClick={() => handleEdit(record)}>
-      //           编辑
-      //         </Button>
-      //         <Button color="danger" variant="text" onClick={() =>handleDel(record._id)}>
-      //           删除
-      //         </Button>
-      //       </Space>
-      //     </>
-      //   )
-      // },
+      render: () => {
+        return (
+          <> 
+            <Space>
+              <Button color="primary" variant="text">
+                编辑
+              </Button>
+              <Button color="danger" variant="text">
+                删除
+              </Button>
+            </Space>
+          </>
+        )
+      },
     },
   ]
+
+  // 分页
+  const pagination = {
+    defaultCurrent: 1,
+    total: total,
+    pageSizeOptions: [5, 10, 15, 20],
+    pageSize: params.pagesize,
+    showSizeChanger: true,
+    showTitle: true,
+    hideOnSinglePage: true,
+    onChange: (page: number, pagesize: number) => {
+      setParams({...params, page, pagesize})
+    },
+    showQuickJumper: true,
+    responsive: true,
+    showTotal: (total: number) => `一共 ${total} 条`
+  }
   
   return (
-    <div>
+    <div className={style.bank}>
       <Form component={false}>
-        <Table<DataType>
+        <Table<TestListItem>
           // components={{
           //   body: { cell: EditableCell },
           // }}
           bordered
           dataSource={list}
           columns={columns}
-          // pagination={pagination}
+          size='middle'
+          pagination={pagination}
           loading={loading}
           scroll={{
             x: 'max-content', // 自适应所有列宽度总和
