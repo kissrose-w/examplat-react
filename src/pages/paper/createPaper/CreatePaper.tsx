@@ -6,7 +6,6 @@ const CreatePaper = () => {
   const [list, setList] = useState<TestListItem[]>([])
 
   useEffect(() => {
-    // 在effect内部定义并调用异步函数
     const getList = async () => {
       try {
         const res = await getTestPaperList({
