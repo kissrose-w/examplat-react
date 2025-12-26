@@ -2,7 +2,16 @@ import React from 'react'
 import { Button, Form, Input, Select, Space } from 'antd'
 import style from './Search.module.scss'
 
-const Search = () => {
+interface Props {
+  setIsModalOpen: (p: boolean) => void
+  setMode: (p: string) => void
+  getSearchP: (p:{
+    username: string,
+    status: string
+  }) => void
+}
+
+const Search: React.FC<Props> = ({setIsModalOpen, setMode, getSearchP}) => {
   // const layout = {
   //   labelCol: { span: 8 },
   //   wrapperCol: { span: 16 },
@@ -11,15 +20,14 @@ const Search = () => {
   // const tailLayout = {
   //   wrapperCol: { offset: 16, span: 8 },
   // }
-
   const [form] = Form.useForm()
 
   const onGenderChange = (value: string) => {
     switch (value) {
-    case 'open':
+    case '1':
       form.setFieldsValue({ note: '开' })
       break
-    case 'close':
+    case '0':
       form.setFieldsValue({ note: '关' })
       break
     default:
@@ -27,11 +35,13 @@ const Search = () => {
   }
 
   const onFinish = (values: unknown) => {
-    console.log(values)
+    console.log(values) 
+    getSearchP(values)
   }
 
   const onReset = () => {
     form.resetFields()
+    getSearchP({})
   }
   return (
     <div className={style.box}>
@@ -52,21 +62,24 @@ const Search = () => {
             placeholder="请选择"
             onChange={onGenderChange}
             options={[
-              { label: '关', value: 'close' },
-              { label: '开', value: 'open' },
+              { label: '关', value: '0' },
+              { label: '开', value: '1' },
             ]}
           />
         </Form.Item>
         
         <Form.Item >
           <Space>
-            <Button type="primary">
+            <Button type="primary" htmlType='submit'>
               查询
             </Button>
             <Button onClick={onReset}>
               重置
             </Button>
-            <Button type="primary">
+            <Button type="primary" onClick={() => {
+              setIsModalOpen(true)
+              setMode('create')
+            }}>
               创建用户
             </Button>
           </Space>

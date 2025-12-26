@@ -61,6 +61,21 @@ export const userSDelApi = (id: string) => {
 }
 
 // 编辑用户
-export const userEditApi = (id: string, password: string) => {
-  return request.post<Omit<Base,'data'>>('/user/update', {id, password})
+export const userEditApi = (params: UserInfo) => {
+  return request.post<Omit<Base,'data'>>('/user/update', params)
+}
+
+// 创建用户
+export const userCreateApi = (params: UserInfo) => {
+  return request.post<Omit<Base,'data'>>('/user/create', params)
+}
+
+// 查询角色接口
+export const userRoleApi = () => {
+  return request.get('role/list')
+}
+
+// 编辑角色接口
+export const roleUpdateApi = (params: string) => {
+  return request.post('role/update', params )
 }
