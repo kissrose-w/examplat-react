@@ -2,14 +2,10 @@ import { getTestPaperList } from '@/services'
 import type { TestListItem } from '@/services/type'
 import React, { useEffect, useState } from 'react'
 import { Form, Table} from 'antd'
-import type { DataType } from '@/pages/question/createSubject/CreateSubject'
 
-interface List extends TestListItem {
-  key: string
-}
 
 const PaperBank = () => {
-  const [list, setList] = useState<List[]>([])
+  const [list, setList] = useState<TestListItem[]>([])
   const [loading, setLoading] = useState(false)
   const getList = async () => {
     try {
@@ -86,7 +82,7 @@ const PaperBank = () => {
   return (
     <div>
       <Form component={false}>
-        <Table<DataType>
+        <Table<TestListItem>
           // components={{
           //   body: { cell: EditableCell },
           // }}
