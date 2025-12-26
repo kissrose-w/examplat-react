@@ -16,7 +16,6 @@ import type {
 } from '@/services/type'
 import request from './request'
 
-
 // 获取验证码图片
 export const getCaptchaApi = () => {
   return request.get<BaseResponse<CaptchaResponse>>('/login/captcha')
@@ -118,3 +117,8 @@ export const getDelSubjectApi = (id:string) => {
 export const getCreateSubjectApi = (params: FieldType) => {
   return request.post<SubjectCreat>('/classify/create',params)
 } 
+
+//编辑接口
+export const getEditSubjectApi = (id:string,value:FieldType) =>{
+  return request.post<SubjectCreat>('/classify/update',{id,...value})
+}
