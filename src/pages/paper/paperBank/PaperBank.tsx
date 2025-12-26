@@ -72,7 +72,7 @@ const PaperBank = () => {
   ]
   
   return (
-    <Form form={form} component={false}>
+    <Form component={false}>
       <Table<DataType>
         // components={{
         //   body: { cell: EditableCell },

@@ -22,6 +22,7 @@ const GroupList = lazy(() => import('@/pages/group/GroupList/GroupList'))
 const GroupStudents = lazy(() => import('@/pages/group/GroupStudents/GroupStudents'))
 const CreatePaper = lazy(() => import('@/pages/paper/createPaper/CreatePaper'))
 
+
 const routes = [
   {
     // 首页
@@ -29,18 +30,67 @@ const routes = [
     element: <Home />,
     children: [
       {
+        path: '/userManage/userOptions',
+        element: <UserOptions />
+      },
+      {
+        path: '/userManage/system',
+        element: <System />
+      },
+      {
+        path: '/userManage/menuManage',
+        element: <MenuManage />
+      },
+      {
+        path: '/userManage/personal',
+        element: <Personal />
+      },
+      {
+        path: '/paper/create-paper',
+        element: <CreatePaper />
+      },
+      {
+        path: '/paper/paper-bank',
+        element: <PaperBank />
+      },
+      {
+        path: '/exam/record',
+        element: <RecordExam />
+      },
+      {
+        path: '/exam/create',
+        element: <CreateExam />
+      },
+      {
+        path: '/question/item-bank',
+        element: <ItemBank />
+      },
+      {
+        path: '/question/create-item',
+        element: <CreateItem />
+      },
+      {
         path: '/question/create-subject',
-        element: <CreateSubject/>
+        element: <CreateSubject />
+      },
+      {
+        path: '/manage-group/group-list',
+        element: <GroupList />
+      },
+      {
+        path: '/manage-group/group-students',
+        element: <GroupStudents />
       },
     ]
   },
+  
   {
     // 登录
     path: '/login',
     element: <Login />
   },
-  
   {
+    // 错误路径
     path: '*',
     element: <NotFound />
   }
