@@ -69,6 +69,7 @@ interface Ques {
 export type TestListItem = {
   classify: string
   createdAt: string
+  createTime: string
   creator: string
   description: string
   duration: number
@@ -82,7 +83,7 @@ export type TestListItem = {
 }
 export type TestList = {
   list: TestListItem[]
-  tottal: number
+  total: number
   totalPage: number
 }
 // 试卷参数
@@ -114,6 +115,7 @@ export type ExaminationList = {
 export type ExaminationItem = {
   classify: string
   createTime: number
+  createdAt: string
   creator: string
   endTime: number
   examId: string
@@ -136,6 +138,7 @@ export type QuestionItem = {
   __v: number,
   _id: string
 }
+
 //科目查询list
 export type SearchSubjectList = {
   _id: string,
@@ -164,4 +167,23 @@ export type FieldType = {
 //创建科目返回值
 export type SubjectCreat = Pick<BaseResponse , 'code'> & {
   msg: string
+}
+
+// 查询班级响应
+export type GroupResponse = {
+  total: number,
+  totalPage: number,
+  list: GroupItem[]
+}
+
+// 班级类型
+export type GroupItem = {
+  classify: string,
+  createTime: number,
+  creator: string,
+  name: string,
+  students: [],
+  teacher: string,
+  __v: number,
+  _id: string
 }

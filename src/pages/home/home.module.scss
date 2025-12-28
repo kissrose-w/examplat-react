@@ -32,6 +32,7 @@
   line-height: 120px;
   color: #fff;
   background-color: #F7EEF7;
+  
   .demo_logo_vertical{
     height: 48px;
     margin: 0;
@@ -42,7 +43,13 @@
   }
   .menu{
     background: #F7EEF7;
-  }
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    &::-webkit-scrollbar{
+      display: none;
+    }
+    }
 }
 
 .content_wrap{

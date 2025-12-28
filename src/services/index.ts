@@ -12,7 +12,8 @@ import type {
   Pages,
   SearchSubject,
   FieldType,
-  SubjectCreat
+  SubjectCreat,
+  GroupResponse
 } from '@/services/type'
 import request from './request'
 
@@ -43,13 +44,23 @@ export const getGroupList = () => {
 }
 
 // 查询试卷列表
-export const getTestPaperList = (params: TestParams) => {
-  return request.get<BaseResponse<TestList>>('/exam/list', { params })
-// 获取试卷列表
+export const getTestPaperList = (params?: TestParams) => {
+  return request.get<BaseResponse<TestList>>('/exam/list', {
+    params: params || ''
+  })
 }
+
+// 获取试卷列表
 export const getExaminationListApi = (params: QueryParams) => {
   return request.get<BaseResponse<ExaminationList>>('/examination/list', {params})
 }
+
+// 删除考试记录
+export const removeExamRecordApi = (id: string) => {
+  return request.post<BaseResponse>('/examination/remove', {id})
+}
+
+
 // 基础类型
 export type Base<T = never> = {
   code: number
@@ -75,9 +86,9 @@ export type UsersListResponse = {
   '__v': number
 }
 // 获取用户列表
-export const usersListApi = (params: UsersListParams) => {
-  return request.get<Base<UserInfo>>('/user/list', {
-    params
+export const usersListApi = (params?: UsersListParams) => {
+  return request.get<Base<UserInfo[]>>('/user/list', {
+    params: params || ''
   })}
 
 // 删除用户
@@ -105,8 +116,10 @@ export const roleUpdateApi = (params: string) => {
   return request.post('role/update', params )
 }
 //查询科目列表
-export const getSubjectApi = (params: Pages) => {
-  return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
+export const getSubjectApi = (params?: Pages) => {
+  return request.get<BaseResponse<SearchSubject>>('/classify/list', {
+    params: params || ''
+  })
 }
 
 //删除科目
@@ -117,4 +130,13 @@ export const getDelSubjectApi = (id:string) => {
 //创建科目接口 
 export const getCreateSubjectApi = (params: FieldType) => {
   return request.post<SubjectCreat>('/classify/create',params)
-} 
+}
+
+
+
+// 查询班级接口
+export const getGroupListApi = (params?: QueryParams) => {
+  return request.get<BaseResponse<GroupResponse>>('/studentGroup/list', {
+    params: params || ''
+  })
+}

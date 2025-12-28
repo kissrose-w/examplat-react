@@ -1,0 +1,24 @@
+.popup{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  padding: 30px 150px;
+  overflow: hidden;
+  
+  .proCard{
+    height: 100%;
+    width: 100%;
+    background: rgba($color: #fff, $alpha: .9);
+    overflow: auto;
+    // scrollbar-width: thin;
+    &::-webkit-scrollbar{
+      display: none;
+    }
+    .content{
+      background: rgba($color: #fff, $alpha: 0);
+    }
+  }
+}
