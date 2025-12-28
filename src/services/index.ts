@@ -76,13 +76,64 @@ export const userCreateApi = (params: UserInfo) => {
 
 // 查询角色接口
 export const userRoleApi = () => {
-  return request.get('role/list')
+  return request.get<Base<PermissionType>>('/role/list')
 }
 
 // 编辑角色接口
-export const roleUpdateApi = (params: string) => {
-  return request.post('role/update', params )
+export const roleUpdateApi = (params: {
+  id: string,
+  name?: string,
+  permission?: string[]
+}) => {
+  return request.post<Base<PermissionType>>('/role/update', params )
 }
+//删除角色接口role/remove 
+export const roleRemoveApi = (id: string) => {
+  return request.post<Base>('/role/remove', { id } )
+}
+export type RoleCreateP = {
+  _id?: string
+  name: string
+  value: string
+  createdAt?: string
+  description: string
+}
+// 创建角色接口
+export const roleCreateApi = (params:RoleCreateP) => {
+  return request.post<Base>('/role/create', params )
+}
+
+export type PermissionType = {
+  children?: PermissionType[]
+  component: 'Layout'
+  createTime: number
+  createdAt: string
+  creator: string
+  disabled: boolean 
+  icon: string
+  isBtn: boolean
+  name: string
+  path: string
+  pid: null
+  sort: 1
+  updatedAt: string
+  _id: string
+}
+//查询权限菜单
+export const getPermissionApi = () => {
+  return request.get<Base<PermissionType>>('/permission/list' )
+}
+
+//编辑权限菜单
+export const permissionEditApi = (params: {
+  id: string,
+  name?: string,
+  permission?: string[]
+}) => {
+  return request.post('/permission/update', params)
+}
+
+
 //查询科目列表
 export const getSubjectApi = (params: Pages) => {
   return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
