@@ -36,7 +36,7 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
   }
 
   const onFinish = (values) => {
-    console.log(values)
+    // console.log(values)
     if(mode === 'edit'){
       onEdit(values)
     }else if(mode === 'create'){
@@ -66,15 +66,15 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
   const getRoleList = async() =>{
     try {
       const res = await userRoleApi()
-      console.log(res.data)
-      console.log(111)
+      // console.log(res.data)
+      // console.log(111)
       
       const options = res.data.data.list.map((item) => {
         return {
           label: item.name,
           value: item.value}
       })
-      console.log(options)
+      // console.log(options)
       
       setRoleList(options)
     } catch (error) {
@@ -92,14 +92,14 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
     // roleList.map((item) => {
     //   form.setFieldsValue(item.value)
     // })
-    console.log(value) 
+    // console.log(value) 
   }
   const roleSet = async(values) => {
-    console.log(111)
+    // console.log(111)
     
     try {
       const res = await roleUpdateApi(values.value)
-      console.log(res.data)
+      // console.log(res.data)
       if(res.data.code === 200){
         message.success('分配成功')
       }else{
