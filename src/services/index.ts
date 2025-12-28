@@ -106,7 +106,7 @@ export const roleUpdateApi = (params: string) => {
   return request.post('role/update', params )
 }
 //查询科目列表
-export const getSubjectApi = (params: Pages) => {
+export const getSubjectApi = (params?: Pages) => {
   return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
 }
 
@@ -120,12 +120,13 @@ export const getCreateSubjectApi = (params: FieldType) => {
   return request.post<SubjectCreat>('/classify/create', params)
 } 
 
-//编辑接口
+//编辑科目接口
 export const getEditSubjectApi = (id:string,value:FieldType) =>{
   return request.post<SubjectCreat>('/classify/update',{id,...value})
 }
+
 //查看题库列表
-export const getQuestionsListApi = (params: Pages & {type?: string}) => {
+export const getQuestionsListApi = (params: (Pages & {type?: string} & {question?: string} & {classify?: string})) => {
   return request.get<BaseResponse<QuestionType>>('/question/list', {params})
 }
 
@@ -134,7 +135,12 @@ export const getQuestionDelApi = (id: string) => {
   return request.post<SubjectCreat>('/question/remove', {id})
 }
 
-//查询题目类型
+//查询题目分类
 export const getQuestionTypeApi = () =>{
   return request.get<BaseResponse<QuestionTypeValue>>('/question/type/list')
+}
+
+//编辑题目接口
+export const getQuestionEditApi = (id: string, question: string) =>{
+  return request.post<SubjectCreat>('/question/update',{id,question})
 }

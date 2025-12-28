@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Button, Space, Table, message  } from 'antd'
+import { Button, Space, Table, message, Input  } from 'antd'
 import type { TableProps } from 'antd'
-import { getQuestionsListApi, getQuestionDelApi } from '@/services'
+import { getQuestionsListApi, getQuestionDelApi, getQuestionEditApi } from '@/services'
 import type { Pages, QuestionData } from '@/services/type'
 import style from './ItemBank.module.scss'
 import { useNavigate } from 'react-router-dom'
@@ -19,19 +19,35 @@ interface DataType {
 
 const ItemBank = () => {
   const navigate = useNavigate()
+  const [question,setQuestion] = useState('')
   const [params,setParams] = useState<Pages>({
     page: 1,
     pagesize: 5
   })
-  const [type,setCurType] = useState<string>()
+  const [type,setCurType] = useState<string>('')
+  const [classify,setClassify] = useState<string>('')
   const [list,setList] = useState<QuestionData[]>([])
   const [total,setTotal] = useState<number>(0)
   const [loading,setLoading] = useState<boolean>(false)
+  const [curId,setCurId] = useState<string | null>('')
+  const [newQuestion,setNewQuestion] = useState('')
   const getQuestion = async () =>{
     setLoading(true)
     try{
-      const res = await getQuestionsListApi({...params,type})
-      console.log(res.data) 
+      const queryParams: Pages & { type?: string; question?: string; classify?: string } = {
+        page: params.page,
+        pagesize: params.pagesize
+      }
+      if (type) {
+        queryParams.type = type
+      }
+      if (question) {
+        queryParams.question = question
+      }
+      if (classify) {
+        queryParams.classify = classify
+      }
+      const res = await getQuestionsListApi(queryParams)
       setList(res.data.data.list)
       setTotal(res.data.data.total)
     }catch(e){
@@ -42,12 +58,11 @@ const ItemBank = () => {
   }
   useEffect(() =>{
     getQuestion()
-  },[params,type])
+  },[params,type,question,classify])
 
   const delList = async (id:string) =>{
     try{
       const res = await getQuestionDelApi(id)
-      console.log(res.data)
       if(res.data.code === API_CODE.SUCCESS){
         message.success('删除成功')
         await getQuestion()
@@ -58,9 +73,34 @@ const ItemBank = () => {
       console.log(e)
     }
   }
-  const handleDel = (id:string) =>{
-    console.log(id)
-    delList(id)
+
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>, id: string) =>{
+    setNewQuestion(e.target.value)
+    const newList = list.map(item =>{
+      if(item._id === id){
+        return {...item , question: e.target.value}
+      }else{
+        return item
+      }
+    })
+    setList(newList)
+  }
+  //更新接口
+  const updateChange = async (id:string) =>{
+    try{
+      const res = await getQuestionEditApi(id,newQuestion)
+      if(res.data.code === API_CODE.SUCCESS){
+        message.success('更新成功')
+      }else{
+        message.error(res.data.msg)
+      }
+    }catch(e){
+      console.log(e)
+    }
+  }
+  const confirmChange = (id:string) =>{
+    updateChange(id)
+    setCurId('')
   }
   const pagination = {
     pageSize: params.pagesize,
@@ -78,7 +118,10 @@ const ItemBank = () => {
       dataIndex: 'question',
       key: 'question',
       className: style.question,
-      fixed: 'start'
+      fixed: 'start',
+      render: (_,  record) =>{
+        return record._id === curId ?  <Input value={_} onChange={e => handleChange(e,record._id)}/> : record.question
+      }
     },
     {
       title: '分类',
@@ -97,29 +140,44 @@ const ItemBank = () => {
       title: '操作',
       key: 'action',
       fixed: 'end',
-      render: (_, record) => (
-        <Space>
-          <Button color="primary" variant="text">
-            编辑
-          </Button>
-          <Button color="danger" variant="text" onClick={() =>handleDel(record._id)}>
-            删除
-          </Button>
-          <Button color="cyan" variant="text">
-            试题详情
-          </Button>
-        </Space>
-      ),
+      render: (_, record) => {
+        return record._id === curId ?
+          <Space>
+            <Button color="primary" variant="text" onClick={() => confirmChange(record._id)}>
+              确认
+            </Button>
+            <Button color="danger" variant="text" onClick={() => setCurId('')}>
+              取消
+            </Button>
+          </Space> :
+          <Space>
+            <Button color="primary" variant="text" onClick={() => setCurId(record._id)}>
+              编辑
+            </Button>
+            <Button color="danger" variant="text" onClick={() => delList(record._id)}>
+              删除
+            </Button>
+            <Button color="cyan" variant="text">
+              题目详情
+            </Button>
+          </Space>
+      },
     },
   ]
   const changeType = (type:string) =>{
-    console.log('类型变为',type)
     setCurType(type)
+  }
+  const inputChange = (question:string) =>{
+    setQuestion(question)
   }
   return (
     <>
       <h2>试题库</h2>
-      <Search onChange={changeType}/>
+      <Search 
+        onChange={(type:string) =>{setCurType(type)}} 
+        onInpChange={inputChange} 
+        onChangeClassify={(classify:string) => setClassify(classify)}
+      />
       <Button color="primary" variant="solid" className={style.create} onClick={() => navigate('/question/create-item')}>添加试题</Button>
       <Table<DataType> 
         columns={columns} 
