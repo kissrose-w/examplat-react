@@ -7,7 +7,7 @@ interface Props{
   onChange: (isModalOpen: boolean) => void
   isModalOpen : boolean
   onCreat: (values:FieldType) => void
-  editData?: DataType
+  editData?: DataType | null
   onEdit:(values: FieldType) => void
 }
 

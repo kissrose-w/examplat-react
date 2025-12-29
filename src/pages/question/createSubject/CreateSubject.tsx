@@ -8,7 +8,7 @@ import type { SearchSubjectList } from '@/services/type'
 import { API_CODE } from '@/constants'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { getDelSubjectApi, getCreateSubjectApi } from '@/services'
+import { getDelSubjectApi, getCreateSubjectApi, getEditSubjectApi } from '@/services'
 import Dialog from './components/Dialog'
 import type { FieldType } from '@/services/type'
 // 注册utc插件（用于时区转换）
@@ -143,15 +143,20 @@ const CreateCategory = () => {
   }
   
   //调编辑接口
-  // const getEdit = async (id,values) =>{
-  //   try{
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
+  const getEdit = async (id:string,values:FieldType) =>{
+    try{
+      const res = await getEditSubjectApi(id,values)
+      console.log(res)
+    }catch(e){
+      console.error(e)
+    }
+  }
   const dialogEdit = (values:FieldType) =>{
-    console.log('点击了编辑确认',values)
-    // getEdit(editData?._id,values)
+    console.log('点击了编辑确认',values,editData?._id)
+    if (editData?._id) {
+      getEdit(editData._id, values)
+    }
+    getList()
   }
   const columns = [
     {
@@ -226,8 +231,9 @@ const CreateCategory = () => {
     pageSizeOptions: [3, 5, 8, 10]
   }
   return (
-    <div className={style.category}>
-      <Button color="primary" onClick={() => setIsModalOpen(true)}>
+    <div className={style.category} >
+      <h2 style={{marginBottom: 30}}>科目管理</h2>
+      <Button color="primary" variant="solid" onClick={() => setIsModalOpen(true)} style={{marginBottom: 20}}>
         创建科目
       </Button>
       <Form form={form} component={false}>

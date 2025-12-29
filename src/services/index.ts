@@ -13,10 +13,11 @@ import type {
   SearchSubject,
   FieldType,
   SubjectCreat,
+  QuestionType,
+  QuestionTypeValue,
   GroupResponse
 } from '@/services/type'
 import request from './request'
-
 
 // 获取验证码图片
 export const getCaptchaApi = () => {
@@ -41,6 +42,13 @@ export const getUserMenuApi = () => {
 // 班级管理接口
 export const getGroupList = () => {
   return request.get('/manage-group/group-list')
+}
+
+// 查询班级接口
+export const getGroupListApi = (params?: QueryParams) => {
+  return request.get<BaseResponse<GroupResponse>>('/studentGroup/list', {
+    params: params || ''
+  })
 }
 
 // 查询试卷列表
@@ -129,14 +137,30 @@ export const getDelSubjectApi = (id:string) => {
 
 //创建科目接口 
 export const getCreateSubjectApi = (params: FieldType) => {
-  return request.post<SubjectCreat>('/classify/create',params)
+  return request.post<SubjectCreat>('/classify/create', params)
+} 
+
+//编辑科目接口
+export const getEditSubjectApi = (id:string,value:FieldType) =>{
+  return request.post<SubjectCreat>('/classify/update',{id,...value})
 }
 
+//查看题库列表
+export const getQuestionsListApi = (params: (Pages & {type?: string} & {question?: string} & {classify?: string})) => {
+  return request.get<BaseResponse<QuestionType>>('/question/list', {params})
+}
 
+//删除题目
+export const getQuestionDelApi = (id: string) => {
+  return request.post<SubjectCreat>('/question/remove', {id})
+}
 
-// 查询班级接口
-export const getGroupListApi = (params?: QueryParams) => {
-  return request.get<BaseResponse<GroupResponse>>('/studentGroup/list', {
-    params: params || ''
-  })
+//查询题目分类
+export const getQuestionTypeApi = () =>{
+  return request.get<BaseResponse<QuestionTypeValue>>('/question/type/list')
+}
+
+//编辑题目接口
+export const getQuestionEditApi = (id: string, question: string) =>{
+  return request.post<SubjectCreat>('/question/update',{id,question})
 }
