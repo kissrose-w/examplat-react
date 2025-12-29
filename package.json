@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/pro-components": "^2.8.10",
     "antd": "^6.1.1",
     "axios": "^1.13.2",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.19",
+    "rc-field-form": "^2.7.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",

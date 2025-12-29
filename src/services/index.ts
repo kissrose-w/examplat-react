@@ -12,10 +12,12 @@ import type {
   Pages,
   SearchSubject,
   FieldType,
-  SubjectCreat
+  SubjectCreat,
+  QuestionType,
+  QuestionTypeValue,
+  GroupResponse
 } from '@/services/type'
 import request from './request'
-
 
 // 获取验证码图片
 export const getCaptchaApi = () => {
@@ -42,14 +44,31 @@ export const getGroupList = () => {
   return request.get('/manage-group/group-list')
 }
 
-// 查询试卷列表
-export const getTestPaperList = (params: TestParams) => {
-  return request.get<BaseResponse<TestList>>('/exam/list', { params })
-// 获取试卷列表
+// 查询班级接口
+export const getGroupListApi = (params?: QueryParams) => {
+  return request.get<BaseResponse<GroupResponse>>('/studentGroup/list', {
+    params: params || ''
+  })
 }
+
+// 查询试卷列表
+export const getTestPaperList = (params?: TestParams) => {
+  return request.get<BaseResponse<TestList>>('/exam/list', {
+    params: params || ''
+  })
+}
+
+// 获取试卷列表
 export const getExaminationListApi = (params: QueryParams) => {
   return request.get<BaseResponse<ExaminationList>>('/examination/list', {params})
 }
+
+// 删除考试记录
+export const removeExamRecordApi = (id: string) => {
+  return request.post<BaseResponse>('/examination/remove', {id})
+}
+
+
 // 基础类型
 export type Base<T = never> = {
   code: number
@@ -75,9 +94,9 @@ export type UsersListResponse = {
   '__v': number
 }
 // 获取用户列表
-export const usersListApi = (params: UsersListParams) => {
-  return request.get<Base<UserInfo>>('/user/list', {
-    params
+export const usersListApi = (params?: UsersListParams) => {
+  return request.get<Base<UserInfo[]>>('/user/list', {
+    params: params || ''
   })}
 
 // 删除用户
@@ -97,16 +116,69 @@ export const userCreateApi = (params: UserInfo) => {
 
 // 查询角色接口
 export const userRoleApi = () => {
-  return request.get('role/list')
+  return request.get<Base<PermissionType>>('/role/list')
 }
 
 // 编辑角色接口
-export const roleUpdateApi = (params: string) => {
-  return request.post('role/update', params )
+export const roleUpdateApi = (params: {
+  id: string,
+  name?: string,
+  permission?: string[]
+}) => {
+  return request.post<Base<PermissionType>>('/role/update', params )
 }
+//删除角色接口role/remove 
+export const roleRemoveApi = (id: string) => {
+  return request.post<Base>('/role/remove', { id } )
+}
+export type RoleCreateP = {
+  _id?: string
+  name: string
+  value: string
+  createdAt?: string
+  description: string
+}
+// 创建角色接口
+export const roleCreateApi = (params:RoleCreateP) => {
+  return request.post<Base>('/role/create', params )
+}
+
+export type PermissionType = {
+  children?: PermissionType[]
+  component: 'Layout'
+  createTime: number
+  createdAt: string
+  creator: string
+  disabled: boolean 
+  icon: string
+  isBtn: boolean
+  name: string
+  path: string
+  pid: null
+  sort: 1
+  updatedAt: string
+  _id: string
+}
+//查询权限菜单
+export const getPermissionApi = () => {
+  return request.get<Base<PermissionType>>('/permission/list' )
+}
+
+//编辑权限菜单
+export const permissionEditApi = (params: {
+  id: string,
+  name?: string,
+  permission?: string[]
+}) => {
+  return request.post('/permission/update', params)
+}
+
+
 //查询科目列表
-export const getSubjectApi = (params: Pages) => {
-  return request.get<BaseResponse<SearchSubject>>('/classify/list', {params})
+export const getSubjectApi = (params?: Pages) => {
+  return request.get<BaseResponse<SearchSubject>>('/classify/list', {
+    params: params || ''
+  })
 }
 
 //删除科目
@@ -116,5 +188,30 @@ export const getDelSubjectApi = (id:string) => {
 
 //创建科目接口 
 export const getCreateSubjectApi = (params: FieldType) => {
-  return request.post<SubjectCreat>('/classify/create',params)
+  return request.post<SubjectCreat>('/classify/create', params)
 } 
+
+//编辑科目接口
+export const getEditSubjectApi = (id:string,value:FieldType) =>{
+  return request.post<SubjectCreat>('/classify/update',{id,...value})
+}
+
+//查看题库列表
+export const getQuestionsListApi = (params: (Pages & {type?: string} & {question?: string} & {classify?: string})) => {
+  return request.get<BaseResponse<QuestionType>>('/question/list', {params})
+}
+
+//删除题目
+export const getQuestionDelApi = (id: string) => {
+  return request.post<SubjectCreat>('/question/remove', {id})
+}
+
+//查询题目分类
+export const getQuestionTypeApi = () =>{
+  return request.get<BaseResponse<QuestionTypeValue>>('/question/type/list')
+}
+
+//编辑题目接口
+export const getQuestionEditApi = (id: string, question: string) =>{
+  return request.post<SubjectCreat>('/question/update',{id,question})
+}

@@ -23,8 +23,8 @@ const UserOptions = () => {
   const getUsers = async() => {
     try {
       const res = await usersListApi({...params,...searchP})
-      console.log(params)
-      console.log(res.data)
+      // console.log(params)
+      // console.log(res.data)
       setUsersInfo(res.data.data.list)
       setTotal(res.data.data.total!)
     } catch (error) {
@@ -63,7 +63,7 @@ const UserOptions = () => {
     setLoading(true)
     try {
       const res = await userEditApi(editParams)
-      console.log(res.data)
+      // console.log(res.data)
       if(res.data.code === CodeEum.SUCCESS){
         message.success('编辑成功')
       }else{
@@ -85,8 +85,8 @@ const UserOptions = () => {
         age: Number(createParams.age),
       }
       const res = await userCreateApi(formattedParams)
-      console.log(formattedParams)
-      console.log(res.data)
+      // console.log(formattedParams)
+      // console.log(res.data)
       if(res.data.code === CodeEum.SUCCESS){
         message.success('创建成功')
       }else{
@@ -102,7 +102,7 @@ const UserOptions = () => {
   const getSearchP = (p) => {
     setSearchP(p)
     setParams({...params, page: 1})
-    getUsers()
+    // getUsers()
   }
   
  
