@@ -17,7 +17,8 @@ import type {
   QuestionTypeValue,
   GroupResponse,
   ClassifyList,
-  TestPaperDetail
+  TestPaperDetail,
+  CreateExamination
 } from '@/services/type'
 import request from './request'
 
@@ -61,6 +62,11 @@ export const getExaminationListApi = (params: QueryParams) => {
 // 删除考试记录
 export const removeExamRecordApi = (id: string) => {
   return request.post<BaseResponse>('/examination/remove', {id})
+}
+
+// 创建考试
+export const createExamApi = (params: CreateExamination) => {
+  return request.post<BaseResponse>(`/examination/create?${Date.now()}`, params)
 }
 
 

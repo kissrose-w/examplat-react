@@ -139,6 +139,17 @@ export type QuestionItem = {
   _id: string
 }
 
+// 创建考试
+export type CreateExamination = {
+  name: string,
+  classify: string,
+  examId: string,
+  group: string,
+  examiner: string,
+  startTime: string,
+  endTime: string
+}
+
 //科目查询list
 export type SearchSubjectList = {
   _id: string

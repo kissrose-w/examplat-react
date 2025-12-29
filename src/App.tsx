@@ -15,7 +15,7 @@ const App = () => {
     if(location.pathname !== LoginPath){
       getUserInfo()
     }
-  }, [location.pathname, getUserInfo])
+  }, [])
 
   return useRoutes(routes)
 }
