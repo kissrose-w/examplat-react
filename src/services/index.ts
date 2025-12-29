@@ -15,7 +15,9 @@ import type {
   SubjectCreat,
   QuestionType,
   QuestionTypeValue,
-  GroupResponse
+  GroupResponse,
+  ClassifyList,
+  TestPaperDetail
 } from '@/services/type'
 import request from './request'
 
@@ -47,13 +49,6 @@ export const getGroupList = () => {
 // 查询班级接口
 export const getGroupListApi = (params?: QueryParams) => {
   return request.get<BaseResponse<GroupResponse>>('/studentGroup/list', {
-    params: params || ''
-  })
-}
-
-// 查询试卷列表
-export const getTestPaperList = (params?: TestParams) => {
-  return request.get<BaseResponse<TestList>>('/exam/list', {
     params: params || ''
   })
 }
@@ -214,4 +209,27 @@ export const getQuestionTypeApi = () =>{
 //编辑题目接口
 export const getQuestionEditApi = (id: string, question: string) =>{
   return request.post<SubjectCreat>('/question/update',{id,question})
+}
+// 查询试卷列表
+export const getTestPaperList = (params?: TestParams) => {
+  return request.get<BaseResponse<TestList>>('/exam/list', {
+    params: params || ''
+  })
+}
+
+// 删除试卷
+export const delTestPaper = (id: string) => {
+  return request.post<BaseResponse>('/exam/remove', { id })
+}
+
+// 获取试卷科目
+export const getClassifyList = (params: TestParams) => {
+  return request.get<BaseResponse<ClassifyList>>('/classify/list', { params })
+}
+
+// 试卷详情
+export const getTestPaperDetail = (id: string) => {
+  return request.get<BaseResponse<TestPaperDetail>>('/exam/detail', {
+    params: { id }
+  })
 }
