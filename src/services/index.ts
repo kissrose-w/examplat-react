@@ -239,3 +239,15 @@ export const getTestPaperDetail = (id: string) => {
     params: { id }
   })
 }
+
+//创建试题
+export const getCreatQuestionApi = (params: {
+  question: string
+  answer: string | string[]
+  type: string | number
+  classify: string | number
+  options: string[]
+  explanation: string
+}) => {
+  return request.post<BaseResponse>('/question/create', params)
+}

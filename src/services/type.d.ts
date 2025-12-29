@@ -260,3 +260,6 @@ export type TestPaperDetail = {
   classify: string
   questions: TestDetailQues[]
 }
+
+//试题创建参数
+export type CreatQuestion = Omit<TestDetailQues, '_id' | '__v'>

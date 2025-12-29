@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Flex, Form, Input, message, Row, Select, Space } from 'antd'
-import { getQuestionTypeApi, getSubjectApi } from '@/services'
-import type { QuestionTypeItem, SearchSubjectList } from '@/services/type'
+import { getQuestionTypeApi, getSubjectApi, getCreatQuestionApi } from '@/services'
+import type { QuestionTypeItem, SearchSubjectList, CreatQuestion } from '@/services/type'
 import { useNavigate } from 'react-router-dom'
 import style from '../CreateItem.module.scss'
 import type { RadioChangeEvent } from 'antd/es'
@@ -27,8 +27,8 @@ interface OptionsType {
 
 const Operation = () => {
   const navigate = useNavigate()
-  const [form] = Form.useForm<FormFields>() // 获取form实例，添加明确的类型参数
-  const [typeData , setTypeData] = useState<QuestionTypeItem[]>([])
+  const [form] = Form.useForm<FormFields>()
+  const [typeData, setTypeData] = useState<QuestionTypeItem[]>([])
   const [classifyData, setClassifyData] = useState<SearchSubjectList[]>([])
   const [curSelect, setCurSelect] = useState<number | string>(0)
   // 选项内容状态，保存每个选项的输入值
@@ -115,6 +115,16 @@ const Operation = () => {
     setBlankAnswer(e.target.value)
   }
 
+  // 重置表单和所有状态
+  const handleReset = () => {
+    form.resetFields()
+    setOptions({ 1: '', 2: '', 3: '', 4: '' })
+    setSelectedAnswer(1)
+    setJudgeAnswer(1)
+    setBlankAnswer('')
+    setCurSelect(0)
+  }
+
   // 处理表单提交
   const handleSubmit = () => {
     form.validateFields().then(values => {
@@ -180,13 +190,22 @@ const Operation = () => {
       }
       
       // 构造最终提交的数据
-      const submitData = {
-        ...values,
+      const submitData: {
+        question: string
+        answer: string | string[]
+        type: string | number
+        classify: string | number
+        options: string[]
+        explanation: string
+      } = {
+        question: values.question,
         answer: answerContent,
-        // 可以根据需要添加判断题的答案变量
-        judgeAnswer
+        type: values.type,
+        classify: values.classify,
+        options: Object.values(options),
+        explanation: values.explanation || '',
       }
-      
+
       console.log('选中的答案：', answerContent)
       console.log('所有表单数据：', values)
       console.log('选项内容：', options)
@@ -194,9 +213,24 @@ const Operation = () => {
       console.log('判断题答案变量1：', judgeAnswer)
       console.log('填空题答案：', blankAnswer)
       console.log('最终提交数据：', submitData)
-      
-      // 这里可以添加实际的提交逻辑
-      // submitDataToServer(submitData)
+
+      // 调用创建接口
+      getCreatQuestionApi(submitData)
+        .then(res => {
+          if (res.data.code === 200) {
+            message.success('创建成功')
+            form.resetFields()
+            setOptions({ 1: '', 2: '', 3: '', 4: '' })
+            setSelectedAnswer(1)
+            setBlankAnswer('')
+          } else {
+            message.error(res.data.msg || '创建失败')
+          }
+        })
+        .catch(err => {
+          message.error('创建失败')
+          console.error(err)
+        })
     }).catch(errorInfo => {
       message.error(errorInfo.message)
     })
@@ -227,15 +261,15 @@ const Operation = () => {
           </Form.Item>
         </Col>
         <Col span={9}>
-          <Form.Item label="分类" rules={[{required: true, message: '请选择类型'}]} className={style.select}>
+          <Form.Item name="classify" label="分类" rules={[{required: true, message: '请选择类型'}]} className={style.select}>
             <Select
               options={formatMenuList(classifyData)}
               placeholder="请选择类型"
-            ></Select>
+            />
           </Form.Item>
         </Col>
       </Row>
-      <Form.Item label='题目' rules={[{required: true, message: '请输入需要创建的题目'}]}>
+      <Form.Item name="question" label='题目' rules={[{required: true, message: '请输入需要创建的题目'}]}>
         <Input.TextArea rows={3} placeholder='请输入题目'/>
       </Form.Item>
       <OptionRenderer
@@ -256,7 +290,7 @@ const Operation = () => {
       <Form.Item>
         <Flex justify='end'>
           <Space>
-            <Button color="default" variant="dashed">
+            <Button color="default" variant="dashed" onClick={handleReset}>
               重置
             </Button>
             <Button color="primary" variant="solid" onClick={handleSubmit}>
