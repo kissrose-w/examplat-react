@@ -7,39 +7,17 @@ import { columns } from './columns'
 import { API_CODE } from '@/constants'
 import { useNavigate } from 'react-router-dom'
 import { testListInfo } from '@/store/TestPaper'
-import Preview from './components/preview/Preview'
-
-// 定义表单字段类型
-interface FormValues {
-  name: string
-  creator: string
-  subject: string
-}
 
 const PaperBank = () => {
   const [params, setParams] = useState({
     page: 1,
     pagesize: 5
   })
-  const [allList, setAllList] = useState<TestListItem[]>([]) //所有试卷数据
-  const [form] = Form.useForm<FormValues>() // 获取form实例
+  const [allList, setAllList] = useState<TestListItem[]>([])
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false) //预览开关
-  const [previewLoading, setPreviewLoading] = useState(true) //预览loading
-  const [previewList, setPreviewList] = useState<TestListItem>() //预览数据
-
 
   // 从store中获取数据
   const { testList: list, loading, total, getList } = testListInfo()
-
-  // 点击预览
-  const onLoading = () => {
-    setOpen(true)
-    setPreviewLoading(true)
-    setTimeout(() => {
-      setPreviewLoading(false)
-    }, 1000)
-  }
 
   // 只在刚进入路由时调用，获取初始数据
   useEffect(() => {
@@ -67,17 +45,6 @@ const PaperBank = () => {
     if (Array.isArray(allList) && allList.length > 0) {
       return Array.from(
         new Set(allList.map((item: TestListItem) => item.creator))
-      )
-    }
-    return []
-  }, [allList])
-  
-  // 科目
-  const subjects = useMemo<string[]>(() => {
-    // 确保allList是数组且有数据
-    if (Array.isArray(allList) && allList.length > 0) {
-      return Array.from(
-        new Set(allList.map((item: TestListItem) => item.classify))
       )
     }
     return []
@@ -117,34 +84,21 @@ const PaperBank = () => {
     }
   }
 
-  // 点击搜索
-  const onSearch = async (validValues: Partial<FormValues>) => {
-    console.log(params, validValues)
-    const searchParams = { 
-      ...params, 
-      ...validValues,
-      page: 1 
-    }
-    console.log(searchParams)
-    getList(searchParams)
-  }
-
   return (
     <div className={style.bank}>
       <Button onClick={() => navigate('/paper/create-paper')}>
         创建试卷
       </Button>
-      <Form 
-        component={false} 
-        form={form}
-      >
+      <Form component={false}>
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item
               name='name'
               label='试卷名称'
               rules={[
-                { required: true, message: 'Input something!' },
+                {
+                  message: 'Input something!',
+                },
               ]}
             >
               <Input placeholder='请输入' />
@@ -155,12 +109,14 @@ const PaperBank = () => {
               name='creator'
               label='创建人'
               rules={[
-                { message: 'Select something!' },
+                {
+                  message: 'Select something!',
+                },
               ]}
             >
               <Select
                 placeholder='请选择'
-                options={creators.map(item => ({
+                options={creators.map((item: string) => ({
                   value: item,
                   label: item
                 }))}
@@ -172,39 +128,35 @@ const PaperBank = () => {
               name='subject'
               label='查询科目'
               rules={[
-                { message: 'Select something!' },
+                {
+                  message: 'Select something!',
+                },
               ]}
             >
               <Select
                 placeholder='请选择'
-                options={subjects.map(item => ({
-                  value: item,
-                  label: item
-                }))}
+                options={[
+                  {
+                    value: '1',
+                    label:
+                      'aaaa',
+                  },
+                  {
+                    value: '2',
+                    label: '222',
+                  },
+                ]}
               />
             </Form.Item>
           </Col>
           <Col push={2} span={6}>
-            <Button style={{marginRight: 10}} onClick={() => form.resetFields()}>重置</Button>
-            <Button type='primary' onClick={() => {
-              // 验证表单，类型从Form.useForm<FormValues>()推断
-              form.validateFields().then((values: FormValues) => {
-                const validValues = Object.entries(values).reduce((prev: Partial<FormValues>, [key, value]) => {
-                  if (value) {
-                    prev[key as keyof FormValues] = value
-                  }
-                  return prev
-                }, {})
-                onSearch(validValues)
-              }).catch(errorInfo => {
-                console.log('表单验证失败:', errorInfo)
-              })
-            }}>查询</Button>
+            <Button style={{marginRight: 10}}>重置</Button>
+            <Button type='primary'>查询</Button>
           </Col>
         </Row>
         <Table<TestListItem>
           dataSource={list}
-          columns={columns({ onDelPaper, onLoading, setPreviewList })}
+          columns={columns({ onDelPaper })}
           size='middle'
           pagination={pagination}
           loading={loading}
@@ -213,12 +165,6 @@ const PaperBank = () => {
           }}
         />
       </Form>
-      <Preview
-        open={open}
-        loading={previewLoading}
-        onClose={() => setOpen(false)}
-        previewList={previewList}
-      />
     </div>
   )
 }

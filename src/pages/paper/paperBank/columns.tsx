@@ -5,12 +5,10 @@ import { Space, Button } from 'antd'
 // 定义columns组件的props类型
 interface Props {
   onDelPaper: (id: string) => void
-  onLoading: () => void
-  setPreviewList: (value: TestListItem) => void
 }
 
 // 定义试卷列表的列配置
-export const columns = ({ onDelPaper, onLoading, setPreviewList }: Props): TableColumnsType<TestListItem> => [
+export const columns = ({ onDelPaper }: Props): TableColumnsType<TestListItem> => [
   {
     title: '试卷名称',
     dataIndex: 'name',
@@ -80,10 +78,7 @@ export const columns = ({ onDelPaper, onLoading, setPreviewList }: Props): Table
           <Button color="danger" variant="text" onClick={() => onDelPaper(record._id)}>
             删除
           </Button>
-          <Button color="green" variant="text" onClick={() => {
-            onLoading()
-            setPreviewList(record)
-          }}>
+          <Button color="green" variant="text">
             预览
           </Button>
         </Space>
