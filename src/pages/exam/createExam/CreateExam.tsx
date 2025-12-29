@@ -7,7 +7,6 @@ import {
   ProFormSelect,
   ProFormText,
   StepsForm,
-  ProTable,
 } from '@ant-design/pro-components'
 import { message } from 'antd'
 import {
@@ -18,8 +17,8 @@ import {
   createExamApi
 } from '@/services'
 import type { CreateExamination, GroupItem, SearchSubjectList, TestListItem, UserInfo } from '@/services/type'
-import style from './createExam.module.scss'
 import Public from './components/public/Public'
+import Config from './components/config/Config'
 import { API_CODE } from '@/constants'
 import { useNavigate } from 'react-router-dom'
 
@@ -106,7 +105,7 @@ const CreateExam = () => {
         ...item,
         key: item._id
       }
-    })
+    }) as (TestListItem & {key: string})[]
   }, [paperList, curSub])
 
 
@@ -245,7 +244,6 @@ const CreateExam = () => {
                 message.error('请选择试卷')
                 return false
               }
-              
               formRef.current?.setFieldsValue({
                 examId: id
               })
@@ -259,33 +257,11 @@ const CreateExam = () => {
               return true
             }}
           >
-            <ProTable
-              className={style.proTable}
+            <Config
               columns={columns}
-              dataSource={paperOptions}
-              rowKey="key"
-              
-              pagination={{
-                pageSize: 8,
-                showQuickJumper: true,
-              }}
-              search={false}
-              dateFormatter="string"
-              options={false}
-              rowSelection={{
-                type: 'radio',
-                onChange: (key) => {
-                  console.log(key)
-                  formRef.current?.setFieldValue('examId', key[0])
-                  setCrParams(prev => {
-                    return {
-                      ...prev,
-                      examId: key[0] + ''
-                    }
-                  })
-                }
-              }}
-              tableAlertRender={false}
+              paperOptions={paperOptions}
+              formRef={formRef}
+              onSaveId={setCrParams}
             />
             
           </StepsForm.StepForm>
