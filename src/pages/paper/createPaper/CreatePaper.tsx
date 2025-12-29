@@ -10,7 +10,7 @@ import {
   ProFormTextArea,
   StepsForm,
 } from '@ant-design/pro-components'
-import { Button, message, Segmented, Modal } from 'antd'
+import { Button, message, Segmented, Modal, Input } from 'antd'
 import { useEffect, useState } from 'react'
 import style from './CreatePaper.module.scss'
 
@@ -50,6 +50,7 @@ const CreatePaper = () => {
 
   // 选择试题
   const getDetail = async (id: string) => {
+    if ( !id ) return
     try {
       const res = await getTestPaperDetail(id)
       console.log(res)
@@ -58,26 +59,33 @@ const CreatePaper = () => {
     }
   }
   useEffect(() => {
-    getDetail(selectValue)
-  }, [isModalOpen])
+    console.log(selectValue)
+    if (selectValue) {
+      getDetail(selectValue)
+    }
+  }, [ selectValue ])
 
+  // 选择科目
   const onChange = (value: string) => {
     console.log(`selected ${value}`)
     setSelectValue(value)
   }
 
+  // 点击选择试题
   const showModal = () => {
     setIsModalOpen(true)
   }
 
+  // 对话框确认
   const handleOk = () => {
     setIsModalOpen(false)
   }
 
+  // 对话框取消
   const handleCancel = () => {
     setIsModalOpen(false)
   }
-
+  
   return (
     <ProCard>
       <StepsForm<{
@@ -180,7 +188,7 @@ const CreatePaper = () => {
             }))}
           />
           <Segmented<string | number>
-            options={['选题组件', '随机组件']} 
+            options={['选题组卷', '随机组卷']} 
             style={{marginBottom: 30}} 
             block 
             onChange={() => setShowQues(!showQues)}
@@ -200,7 +208,16 @@ const CreatePaper = () => {
                 <p>Some contents...</p>
               </Modal>
             </div> : 
-            <div>111</div>
+            <div>
+              试题数量：
+              <Input.Search
+                type="number" 
+                defaultValue="0"
+                allowClear
+                style={{width: 150, marginBottom: 30}}
+                enterButton="确定"
+              />
+            </div>
           }
         </StepsForm.StepForm>
         <StepsForm.StepForm name="time" title="展示试卷基本信息">
