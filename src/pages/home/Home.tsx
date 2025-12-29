@@ -66,7 +66,7 @@ const Home = () => {
             theme='light'
           >
             
-            <Menu className={style.menu} defaultSelectedKeys={['1']} mode="inline" items={menuList} />
+            <Menu selectedKeys={[location.pathname]} mode="inline" items={menuList} />
           </Sider>
           <Content className={style.content_wrap}>
             <div className={style.content} >
