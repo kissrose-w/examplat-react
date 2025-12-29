@@ -5,7 +5,7 @@ import type { QuestionTypeItem, SearchSubjectList } from '@/services/type'
 import { useNavigate } from 'react-router-dom'
 import style from '../CreateItem.module.scss'
 import type { RadioChangeEvent } from 'antd/es'
-import OptionRenderer from './OptionRenderer'
+import OptionRenderer from './optionRenderer/OptionRenderer'
 // 定义表单字段类型
 interface FormFields {
   type: string | number // 题型
