@@ -3,14 +3,15 @@ import type { TestListItem } from '@/services/type'
 import { useEffect, useState, useMemo } from 'react'
 import { Form, message, Table, Button, Input, Select, Row, Col } from 'antd'
 import style from './PaperBank.module.scss'
-import { columns } from './columns'
+
 import { API_CODE } from '@/constants'
 import { useNavigate } from 'react-router-dom'
 import { testListInfo } from '@/store/TestPaper'
 import Preview from './components/preview/Preview'
+import Search from './components/search/Search'
 
 // 定义表单字段类型
-interface FormValues {
+export interface FormValues {
   name: string
   creator: string
   subject: string
@@ -23,15 +24,11 @@ const PaperBank = () => {
   })
   const [allList, setAllList] = useState<TestListItem[]>([]) //所有试卷数据
   const [searchConditions, setSearchConditions] = useState<Partial<FormValues>>({}) //搜索条件
-  const [form] = Form.useForm<FormValues>() // 获取form实例
-  const navigate = useNavigate()
   const [open, setOpen] = useState(false) //预览开关
   const [previewLoading, setPreviewLoading] = useState(true) //预览loading
   const [previewList, setPreviewList] = useState<TestListItem>() //预览数据
-
-
-  // 从store中获取数据
-  const { loading, total, getList } = testListInfo()
+  const { loading, total, getList } = testListInfo() // 从store中获取数据
+  const navigate = useNavigate()
 
   // 点击预览
   const onLoading = () => {
@@ -157,91 +154,19 @@ const PaperBank = () => {
       <Button style={{marginBottom: 30}} onClick={() => navigate('/paper/create-paper')}>
         创建试卷
       </Button>
-      <Form 
-        component={false} 
-        form={form}
-      >
-        <Row gutter={16}>
-          <Col span={6}>
-            <Form.Item
-              name='name'
-              label='试卷名称'
-              rules={[
-                { message: 'Input something!' },
-              ]}
-            >
-              <Input placeholder='请输入' />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              name='creator'
-              label='创建人'
-              rules={[
-                { message: 'Select something!' },
-              ]}
-            >
-              <Select
-                placeholder='请选择'
-                options={creators.map(item => ({
-                  value: item,
-                  label: item
-                }))}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              name='subject'
-              label='查询科目'
-              rules={[
-                { message: 'Select something!' },
-              ]}
-            >
-              <Select
-                placeholder='请选择'
-                options={subjects.map(item => ({
-                  value: item,
-                  label: item
-                }))}
-              />
-            </Form.Item>
-          </Col>
-          <Col push={2} span={6}>
-            <Button style={{marginRight: 10}} onClick={() => {
-              form.resetFields()
-              // 清空搜索条件
-              setSearchConditions({})
-              // 重置页码到第1页
-              setParams(prev => ({ ...prev, page: 1 }))
-            }}>重置</Button>
-            <Button type='primary' onClick={() => {
-              // 验证表单，类型从Form.useForm<FormValues>()推断
-              form.validateFields().then((values: FormValues) => {
-                const validValues = Object.entries(values).reduce((prev: Partial<FormValues>, [key, value]) => {
-                  if (value) {
-                    prev[key as keyof FormValues] = value
-                  }
-                  return prev
-                }, {})
-                onSearch(validValues)
-              }).catch(errorInfo => {
-                console.log('表单验证失败:', errorInfo)
-              })
-            }}>查询</Button>
-          </Col>
-        </Row>
-        <Table<TestListItem>
-          dataSource={currentPageData}
-          columns={columns({ onDelPaper, onLoading, setPreviewList })}
-          size='middle'
-          pagination={pagination}
-          loading={loading}
-          scroll={{
-            x: 'max-content', // 自适应所有列宽度总和
-          }}
-        />
-      </Form>
+      <Search
+        loading={loading}
+        creators={creators}
+        subjects={subjects}
+        currentPageData={currentPageData}
+        pagination={pagination}
+        onSearch={onSearch}
+        onLoading={onLoading}
+        onDelPaper={onDelPaper}
+        setSearchConditions={setSearchConditions}
+        setParams={setParams}
+        setPreviewList={setPreviewList}
+      />
       <Preview
         open={open}
         loading={previewLoading}
