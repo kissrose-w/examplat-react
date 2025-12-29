@@ -1,7 +1,7 @@
 import { delTestPaper, getTestPaperList } from '@/services'
 import type { TestListItem } from '@/services/type'
-import { useEffect, useState, useMemo } from 'react'
-import { Form, message, Table, Button, Input, Select, Row, Col } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { Form, message, Table, Button, Row, Col, Select, Input } from 'antd'
 import style from './PaperBank.module.scss'
 import { columns } from './columns'
 import { API_CODE } from '@/constants'
@@ -43,6 +43,7 @@ const PaperBank = () => {
 
   // 只在刚进入路由时调用，获取初始数据
   useEffect(() => {
+    // 调用store的getList方法，传递当前分页参数
     getList(params)
   }, [params, getList])
 
@@ -130,7 +131,7 @@ const PaperBank = () => {
 
   return (
     <div className={style.bank}>
-      <Button style={{marginBottom: 30}} onClick={() => navigate('/paper/create-paper')}>
+      <Button onClick={() => navigate('/paper/create-paper')}>
         创建试卷
       </Button>
       <Form 
