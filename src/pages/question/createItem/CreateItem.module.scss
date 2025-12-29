@@ -1,0 +1,30 @@
+h2{
+  margin-bottom: 40px;
+}
+nav{
+  display: flex;
+  .item{
+    background: #FAFAFA;
+    margin-right: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    margin-bottom: 30px;
+    &:hover{
+      background: #eee;
+      color: #1892FF;
+    }
+    &.active{
+      background: #eee;
+      color: #1892FF;
+    }
+  }
+}
+main{
+  width: 100%;
+
+}
+.form{
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 15px;
+}
