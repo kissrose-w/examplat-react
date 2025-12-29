@@ -67,19 +67,20 @@ interface Ques {
   _id: string
 }
 export type TestListItem = {
-  classify: string
-  createdAt: string
-  createTime: string
-  creator: string
-  description: string
-  duration: number
-  name: string
-  questions: Ques[]
-  status: number
-  totalScore: number
-  updatedAt: string
-  __V: number
+  
   _id: string
+  name: string
+  classify: string
+  questions: Ques[]
+  creator: string
+  createTime: string
+  __V: number
+  // createdAt: string
+  // description: string
+  // duration: number
+  // status: number
+  // totalScore: number
+  // updatedAt: string
 }
 export type TestList = {
   list: TestListItem[]
