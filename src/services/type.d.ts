@@ -207,33 +207,6 @@ export type QuestionTypeValue = {
 }
 
 
-//试题data
-export type QuestionData = {
-  answer: string
-  classify: string
-  options: string[]
-  question: string
-  type: 0 | 1 | 2 | 3
-  __v: number
-  _id: string
-}
-
-//试题列表
-export type QuestionType = {
-  total: number
-  totalPage: number
-  list: QuestionData[]
-}
-
-export type QuestionTypeItem = Pick<SearchSubjectList, 'name' | '_id' | 'value'>
-
-
-//试题类型
-export type QuestionTypeValue = {
-  list:QuestionTypeItem[]
-}
-
-
 // 查询班级响应
 export type GroupResponse = {
   total: number,
