@@ -69,11 +69,12 @@ interface Ques {
 export type TestListItem = {
   classify: string
   createdAt: string
+  createTime: string
   creator: string
   description: string
   duration: number
   name: string
-  question: Ques[]
+  questions: Ques[]
   status: number
   totalScore: number
   updatedAt: string
@@ -82,7 +83,7 @@ export type TestListItem = {
 }
 export type TestList = {
   list: TestListItem[]
-  tottal: number
+  total: number
   totalPage: number
 }
 // 试卷参数
@@ -114,6 +115,7 @@ export type ExaminationList = {
 export type ExaminationItem = {
   classify: string
   createTime: number
+  createdAt: string
   creator: string
   endTime: number
   examId: string
@@ -136,6 +138,7 @@ export type QuestionItem = {
   __v: number,
   _id: string
 }
+
 //科目查询list
 export type SearchSubjectList = {
   _id: string
@@ -192,3 +195,84 @@ export type QuestionTypeValue = {
   list:QuestionTypeItem[]
 }
 
+
+//试题data
+export type QuestionData = {
+  answer: string
+  classify: string
+  options: string[]
+  question: string
+  type: 0 | 1 | 2 | 3
+  __v: number
+  _id: string
+}
+
+//试题列表
+export type QuestionType = {
+  total: number
+  totalPage: number
+  list: QuestionData[]
+}
+
+export type QuestionTypeItem = Pick<SearchSubjectList, 'name' | '_id' | 'value'>
+
+
+//试题类型
+export type QuestionTypeValue = {
+  list:QuestionTypeItem[]
+}
+
+
+// 查询班级响应
+export type GroupResponse = {
+  total: number,
+  totalPage: number,
+  list: GroupItem[]
+}
+
+// 班级类型
+export type GroupItem = {
+  classify: string,
+  createTime: number,
+  creator: string,
+  name: string,
+  students: [],
+  teacher: string,
+  __v: number,
+  _id: string
+}
+//创建试卷，试卷科目分类项
+export type ClassifyItem = {
+  _id: string
+  name: string
+  sort: number
+  value: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 科目分类列表
+export type ClassifyList = {
+  list: ClassifyItem[]
+  total: number
+  totalPage: number
+}
+
+// 试卷详情questions
+export type TestDetailQues = {
+  _id: string
+  question: string
+  type: string
+  classify: string
+  answer: string
+  options: string[]
+  desc: string
+  __v: number
+}
+// 试卷详情
+export type TestPaperDetail = {
+  _id: string
+  name: string
+  classify: string
+  questions: TestDetailQues[]
+}

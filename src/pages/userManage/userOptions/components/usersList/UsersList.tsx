@@ -107,7 +107,7 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
             setMode('distribute')
           }}>分配角色</Tag>
           <Tag color='blue' onClick={() => {
-            console.log(record)
+            // console.log(record)
             onSetOriginInfo(record)
             setIsModalOpen(true)
             setMode('edit')
