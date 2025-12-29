@@ -163,9 +163,39 @@ export const getPermissionApi = () => {
 export const permissionEditApi = (params: {
   id: string,
   name?: string,
-  permission?: string[]
+  path?: string,
+  isBtn?: boolean
 }) => {
   return request.post('/permission/update', params)
+}
+
+// 删除权限菜单
+export const permissionRemoveApi = (id: string) => {
+  return request.post<Base>('/permission/remove', {id})
+}
+
+export type PerCreateP = {
+  pid?: string,
+  name?: string,
+  path: string,
+  disabled: boolean,
+  isBtn?: boolean
+}
+// 创建权限菜单
+export const permissionCreateApi = (params: PerCreateP) => {
+  return request.post<Base>('/permission/create', params)
+}
+
+export type PersonalP = {
+  username: string
+  age: number
+  sex: 0 | 1
+  email: string
+}
+
+// 修改个人信息
+export const personalEditApi = (params: PersonalP) => {
+  return request.post('/user/update/info', params)
 }
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { usersListApi, userSDelApi, userEditApi, userCreateApi, userRoleApi } from '@/services'
+import { usersListApi, userSDelApi, userEditApi, userCreateApi} from '@/services'
 import UsersList from '../../userManage/userOptions/components/usersList/UsersList'
 import Search from '../../userManage/userOptions/components/search/Search'
 import UserModal from '../../userManage/userOptions/components/userModal/UserModal'
