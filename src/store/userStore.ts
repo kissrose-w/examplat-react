@@ -16,7 +16,7 @@ export const useUserStore = create<State>((set) => ({
   getUserInfo: async () => {
     try {
       const res = await getUserInfoApi()
-      console.log(res)
+      // console.log(res)
       set(() => ({userInfo: res.data.data}))
       const menuRes = await getUserMenuApi()
       set(() => ({menuList: menuRes.data.data.list}))
