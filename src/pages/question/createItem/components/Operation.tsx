@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Form, Input, Radio, Row, Select } from 'antd'
+import { Button, Col, Flex, Form, Input, Radio, Row, Select, Space } from 'antd'
 import { getQuestionTypeApi, getSubjectApi } from '@/services'
 import type { QuestionTypeItem, SearchSubjectList } from '@/services/type'
+import { useNavigate } from 'react-router-dom'
 import style from '../CreateItem.module.scss'
 const Operation = () => {
+  const navigate = useNavigate()
   const [typeData , setTypeData] = useState<QuestionTypeItem[]>([])
   const [classifyData, setClassifyData] = useState<SearchSubjectList[]>([])
   const [curSelect, setCurSelect] = useState<number | string>(0)
@@ -90,6 +92,26 @@ const Operation = () => {
         <Input.TextArea rows={3} placeholder='请输入题目'/>
       </Form.Item>
       {renderOptionType()}
+      <Col span={8}>
+        <Form.Item label='解析' rules={[{required: true, message: '请输入需要创建的题目'}]}>
+          <Input.TextArea rows={3} placeholder='请输入题目'/>
+        </Form.Item>
+      </Col>
+      <Form.Item>
+        <Flex justify='end'>
+          <Space>
+            <Button color="default" variant="dashed">
+              重置
+            </Button>
+            <Button color="primary" variant="solid">
+              提交
+            </Button>
+            <Button color="default" variant="outlined" onClick={() => navigate('/question/item-bank')}>
+              返回
+            </Button>
+          </Space>
+        </Flex>
+      </Form.Item>
     </Form>
   )
 }
