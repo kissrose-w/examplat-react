@@ -1,7 +1,7 @@
 import { delTestPaper, getTestPaperList } from '@/services'
 import type { TestListItem } from '@/services/type'
 import { useEffect, useMemo, useState } from 'react'
-import { Form, message, Table, Button, Row, Col,  } from 'antd'
+import { Form, message, Table, Button, Input, Select, Row, Col } from 'antd'
 import style from './PaperBank.module.scss'
 import { columns } from './columns'
 import { API_CODE } from '@/constants'
