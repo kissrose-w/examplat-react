@@ -13,22 +13,23 @@ import { useUserStore } from '@/store/userStore'
 const Login = () => {
 
   const [captcha, setCaptcha] = useState<string>()
+  const [sessionId, setSessionId] = useState<string>('')
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const getUserInfo = useUserStore(state => state.getUserInfo)
-  const [session, setSession] = useState<string>()
 
 
-  const onFinish = async (values: LoginParams) => {
+  // 点击登录调用登录接口，存token，获取用户信息，跳转主页面
+  const onFinish = async (values: Omit<LoginParams, 'sessionId'>) => {
     console.log(values)
+    const params: LoginParams = {...values, sessionId}
     try {
       setLoading(true)
-      const res = await toLoginApi(values)
+      const res = await toLoginApi(params)
       console.log(res.data)
       if(res.data.code === API_CODE.SUCCESS){
         message.success(res.data.msg)
         setToken(res.data.data.token)
-        setSession(res.data.data.sessionId)
         getUserInfo()
         navigate('/')
       } else if (res.data.code === API_CODE.EXPIRED_CAPTCHA) {
@@ -45,12 +46,14 @@ const Login = () => {
     }
   }
 
+  // 获取图形验证码
   const getCaptcha = async () => {
     try {
       const res = await getCaptchaApi()
       console.log(res.data)
       if(res.data.code === API_CODE.SUCCESS){
         setCaptcha(res.data.data.code)
+        setSessionId(res.data.data.sessionId)
       } else {
         message.error(res.data.msg)
       }

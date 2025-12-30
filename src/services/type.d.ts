@@ -16,7 +16,7 @@ export type CaptchaResponse = {
 }
 
 // 登录参数
-export type LoginParams = Record<'username' | 'password' | 'code', string>
+export type LoginParams = Record<'username' | 'password' | 'code' | 'sessionId', string>
 
 // 登录响应
 export type LoginResponse = {
