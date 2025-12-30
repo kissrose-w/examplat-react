@@ -57,26 +57,6 @@ const RoleDrawer: React.FC<Props> = ({open, setOpen, itemPer, editP,permissionLi
     }
   }
 
-  // 权限编辑
-  // const permissionEdit = async() => {
-  //   try {
-  //     const res = await permissionEditApi({
-  //       id: editP._id,
-  //       name: editP.name,
-  //       permission: checkedKeys.map(key => String(key))
-  //     })
-  //     console.log(res.data)
-  //     if(res.data.code === API_CODE.SUCCESS ){
-  //       await getRoleList()
-  //       await onGetPermission()
-  //       setOpen(false)
-  //     }else{
-  //       message.error('编辑权限失败')
-  //     }
-  //   } catch (error) {
-  //     console.error( error)
-  //   }
-  // }
 
   return (
     <div>
