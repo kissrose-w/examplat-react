@@ -12,7 +12,7 @@ interface DataType {
   question: string;
   type: number;
   _id: string;
-  options: string[];
+  options: { label: string, value: string }[];
   classify: string
 }
 
@@ -128,19 +128,23 @@ const ItemBank = () => {
       dataIndex: 'type',
       key: 'type',
       render: (_:string) =>{
-        return _ === '4' ? '填空题' : (_ === '1' ? '单选题' : (_ === '2' ? '多选题' : '判断题'))
+        return _ === 'fill' ? '填空题' : (_ === 'single' ? '单选题' : (_ === 'multiple' ? '多选题' : '判断题'))
       }
     },
     {
       title: '题型',
       dataIndex: 'classify',
       key: 'classify',
+      render: (_) => {
+        return _.name
+      }
     },
     {
       title: '操作',
       key: 'action',
       fixed: 'end',
       render: (_, record) => {
+        // console.log(record)
         return record._id === curId ?
           <Space>
             <Button color="primary" variant="text" onClick={() => confirmChange(record._id)}>

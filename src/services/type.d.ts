@@ -35,7 +35,7 @@ export type PermissionItem = {
 export type UserInfo = {
   _id: string
   username: string
-  sex: string
+  sex: 0 | 1
   avator: string
   email: string
   age: number
@@ -101,7 +101,7 @@ export type ExaminationItem = {
 export type QuestionItem = {
   answer: string,
   classify: string,
-  options: string[],
+  options: { label: string, value: string }[],
   question: string,
   type: string,
   __v: number,
@@ -113,8 +113,8 @@ export type CreateExamination = {
   name: string,
   classify: string,
   examId: string,
-  group: string,
-  examiner: string,
+  group: string | string[],
+  examiner: string | string[],
   startTime: string,
   endTime: string
 }
@@ -153,11 +153,7 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: {
-    label: string, 
-    value: string, 
-    _id: string
-  }[]
+  options: { label: string, value: string }[]
   question: string
   type: 'single' | 'multiple' | 'judge'
   __v: number
@@ -257,13 +253,12 @@ export type TestDetailQues = {
   _id: string
   question: string
   type: string
-  answer: string
-  options: {
-    label: string,
-    value: string,
-    _id: string
-  }[]
   score: number
+  classify: string | { _id: string, name: string }
+  answer: string
+  options: { label: string, value: string }[]
+  desc: string
+  __v: number
 }
 // 试卷详情
 export type TestPaperDetail = {
@@ -304,4 +299,11 @@ export type TestCreate = {
 }
 
 //试题创建参数
-export type CreatQuestion = Omit<TestDetailQues, '_id' | '__v'>
+export type CreatQuestion = {
+  question: string
+  type: string
+  classify: string | { _id: string, name: string }
+  answer: string
+  options: { label: string, value: string }[]
+  explanation: string
+}

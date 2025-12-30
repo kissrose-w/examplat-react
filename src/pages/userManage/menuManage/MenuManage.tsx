@@ -7,8 +7,6 @@ import { Button, message, Space, Table, Input } from 'antd'
 import type { TableColumnsType } from 'antd'
 import { CloseCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 
-
-
 const MenuManage = () => {
 
   const [menuList, setMenuList] = useState<PermissionType[]>([])
@@ -28,7 +26,7 @@ const MenuManage = () => {
       key: 'name',
       onCell: () => ({
         style: {
-          paddingBottom: 35
+          paddingBottom: 16
         }
       }),
       render: (_, record) => {
@@ -69,10 +67,10 @@ const MenuManage = () => {
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (_, record) => {
-        return new Date( record.createTime).toLocaleString()
+        return new Date( record.createdAt).toLocaleString()
       },
       align: 'center'
     },
@@ -107,7 +105,7 @@ const MenuManage = () => {
     setLoading(true)
     try {
       const res = await getPermissionApi()
-      // console.log(res.data)
+      // console.log(res.data)a
       setMenuList(res.data.data.list)
     } catch (error) {
       console.log(error)  

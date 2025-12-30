@@ -11,7 +11,7 @@ interface Props {
 }
 
 const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
-  const { userInfo } = useUserStore()
+  const { userInfo, getUserInfo } = useUserStore()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
@@ -30,20 +30,16 @@ const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
     }
   }, [form, userInfo, isModalOpen])
   
-  const handleOk = () => {
-    form.resetFields()
-    form.setFieldsValue(userInfo)
-    setIsModalOpen(false)
-  }
-
   const handleCancel = () => {
     form.resetFields()
     form.setFieldsValue(userInfo)
     setIsModalOpen(false)
   }
  
-  const onFinish = (values: PersonalP) => {
-    editPersonalInfo(values)
+  const onFinish = async(values: PersonalP) => {
+    await editPersonalInfo(values)
+    getUserInfo()
+    setIsModalOpen(false)
   }
 
   const onReset = () => {
@@ -71,7 +67,6 @@ const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
       <Modal
         title="编辑信息"
         open={isModalOpen}
-        onOk={handleOk}
         onCancel={handleCancel}
         footer={false}
       >
@@ -80,6 +75,9 @@ const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
           form={form}
           onFinish={onFinish}
         >
+          <Form.Item name="id" initialValue={userInfo?._id}  hidden>
+            <Input />
+          </Form.Item>
           <Form.Item name="username" label="姓名" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -88,8 +86,8 @@ const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
               allowClear
               placeholder="请选择性别"
               options={[
-                { label: '男', value: '1' },
-                { label: '女', value: '0' }
+                { label: '男', value: 1 },
+                { label: '女', value: 0 }
               ]}
             />
           </Form.Item>

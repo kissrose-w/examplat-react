@@ -13,7 +13,7 @@ interface OptionRendererProps {
   selectedAnswer: number | number[]
   options: OptionsType
   blankAnswer: string
-  handleOptionChange: (optionKey: keyof OptionsType, value: string) => void
+  handleOptionChange: (optionKey: number, value: string) => void
   handleRadioAnswerChange: (e: RadioChangeEvent) => void
   handleCheckboxAnswerChange: (checkedValues: number[]) => void
   handleBlankAnswerChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -71,7 +71,7 @@ const OptionRenderer: React.FC<OptionRendererProps> = ({
     // 渲染选择题（单选、多选、判断）的通用组件
     const renderChoiceOptions = () => {
       // 判断题特殊处理，只有两个固定选项
-      if (curSelect === 3) {
+      if (curSelect === 3 || curSelect === 'judge') {
         return (
           <Form.Item label="选项">
             <Radio.Group value={selectedAnswer as number} onChange={handleRadioAnswerChange}>
@@ -89,7 +89,8 @@ const OptionRenderer: React.FC<OptionRendererProps> = ({
       }
       
       // 单选题和多选题的通用渲染逻辑
-      const isRadio = curSelect === 1
+      const isRadio = curSelect === 1 || curSelect === 'single'
+      const isCheckbox = curSelect === 2 || curSelect === 'multiple'
       const optionCount = 4
       
       return (
@@ -103,7 +104,7 @@ const OptionRenderer: React.FC<OptionRendererProps> = ({
                   )}
                 </Space>
               </Radio.Group>
-            ) : (
+            ) : isCheckbox ? (
               <Checkbox.Group
                 value={Array.isArray(selectedAnswer) ? selectedAnswer : []}
                 onChange={handleCheckboxAnswerChange}
@@ -114,19 +115,23 @@ const OptionRenderer: React.FC<OptionRendererProps> = ({
                   )}
                 </Space>
               </Checkbox.Group>
-            )}
+            ) : null}
           </div>
         </Form.Item>
       )
     }
     
     switch (curSelect) {
-    case 1: // 单选题
-    case 2: // 多选题
-    case 3: // 判断题
+    case 1:
+    case 'single': // 单选题
+    case 2:
+    case 'multiple': // 多选题
+    case 3:
+    case 'judge': // 判断题
       return renderChoiceOptions()
 
-    case 4: // 填空题
+    case 4:
+    case 'fill': // 填空题
       return (
         <>
           <Form.Item

@@ -19,6 +19,7 @@ import {
 import type { CreateExamination, GroupItem, SearchSubjectList, TestListItem, UserInfo } from '@/services/type'
 import Public from './components/public/Public'
 import Config from './components/config/Config'
+import BaseInfo from './components/baseInfo/BaseInfo'
 import { API_CODE } from '@/constants'
 import { useNavigate } from 'react-router-dom'
 
@@ -41,6 +42,7 @@ const CreateExam = () => {
     endTime: ''
   })
   const [curSub, setCurSub] = useState<string>()
+  const [curId, setCurId] = useState<string>()
   const navigate = useNavigate()
 
   // 获取各个数据列表
@@ -59,6 +61,7 @@ const CreateExam = () => {
         setUserList(userRes.data.data.list)
         setGroupList(groupRes.data.data.list)
         setPaperList(paperRes.data.data.list)
+        
       })
     } catch (e) {
       console.log(e)
@@ -99,14 +102,15 @@ const CreateExam = () => {
   }, [groupList])
 
   const paperOptions = useMemo(() => {
-    const filPapers = paperList?.filter(v => v.classify === curSub)
+    const filPapers = paperList?.filter(v => v.classify === curId)
+    console.log(filPapers, curId)
     return filPapers?.map(item => {
       return {
         ...item,
         key: item._id
       }
     }) as (TestListItem & {key: string})[]
-  }, [paperList, curSub])
+  }, [paperList, curId])
 
 
   // 配置试卷中表格列项
@@ -137,14 +141,41 @@ const CreateExam = () => {
   ]
 
 
+  const saveCur = (val: string) => {
+    setCurSub(val)
+    setCurId(subList?.find(v => v.name === val)?._id)
+  }
+
+  // 第一步结束后执行，格式化数据
+  const onfinishNext = async () => {
+    console.log(formRef.current?.getFieldsValue())
+    const base = formRef.current?.getFieldsValue()
+    // 转换dateTime为startTime和endTime字符串
+    const startTimeStr = dayjs(base.dateTime[0]).format('YYYY-MM-DD HH:mm:ss')
+    const endTimeStr = dayjs(base.dateTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    // 移除原始dateTime字段，避免React渲染dayjs对象
+    const { dateTime, ...rest } = base
+    const updatedValues = {
+      ...rest,
+      startTime: startTimeStr,
+      endTime: endTimeStr
+    }
+    formRef.current?.setFieldsValue(updatedValues)
+    setCrParams(updatedValues)
+    console.log(updatedValues)
+    
+    return true
+  }
+
   // 提交后调用创建考试
   const createExam = async (params: CreateExamination) => {
-    const start = (Date.parse(params.startTime)) + ''
-    const end = (Date.parse(params.endTime)) + ''
+    const start = (dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'))
+    const end = (dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'))
     const cPa = {
       ...params,
       startTime: start,
-      endTime: end
+      endTime: end,
+      classify: curId
     } as CreateExamination
     try {
       const res = await createExamApi(cPa)
@@ -161,13 +192,14 @@ const CreateExam = () => {
     }
   }
 
+
   return (
     <div>
       <ProCard>
         <StepsForm<CreateExamination>
           formRef={formRef}
           onFinish={async () => {
-            message.success('提交成功')
+            // message.success('提交成功')
             console.log(crParams)
             createExam(crParams)
           }}
@@ -181,57 +213,14 @@ const CreateExam = () => {
           <StepsForm.StepForm<CreateExamination>
             title="考试基本信息"
             
-            onFinish={async () => {
-              console.log(formRef.current?.getFieldsValue())
-              const base = formRef.current?.getFieldsValue()
-              // 转换dateTime为startTime和endTime字符串
-              const startTimeStr = dayjs(base.dateTime[0]).format('YYYY-MM-DD HH:mm:ss')
-              const endTimeStr = dayjs(base.dateTime[1]).format('YYYY-MM-DD HH:mm:ss')
-              // 移除原始dateTime字段，避免React渲染dayjs对象
-              const { dateTime, ...rest } = base
-              const updatedValues = {
-                ...rest,
-                startTime: startTimeStr,
-                endTime: endTimeStr
-              }
-              formRef.current?.setFieldsValue(updatedValues)
-              setCrParams(updatedValues)
-              console.log(updatedValues)
-              
-              return true
-            }}
+            onFinish={onfinishNext}
           >
-            <ProFormText
-              name="name"
-              label="考试名称"
-              width="md"
-              tooltip="最长为 24 位，用于标定的唯一 id"
-              placeholder="请输入名称"
-              rules={[{ required: true }]}
-            />
-            <ProFormDateTimeRangePicker rules={[{ required: true }]} name="dateTime" label="考试时间" />
-            <ProFormSelect
-              label="科目分类"
-              name='classify'
-              options={subOptions}
-              placeholder="请选择"
-              rules={[{ required: true }]}
-              onChange={(val: string) => {
-                // console.log(val)
-                setCurSub(val)
-              }}
-            />
-            <ProFormSelect
-              label="监考人"
-              name='examiner'
-              options={userOptions}
-              rules={[{ required: true }]}
-            />
-            <ProFormSelect
-              label="考试班级"
-              name='group'
-              options={groupOptions}
-              rules={[{ required: true }]}
+
+            <BaseInfo
+              subOptions={subOptions}
+              userOptions={userOptions}
+              groupOptions={groupOptions}
+              onSaveCur={saveCur}
             />
           </StepsForm.StepForm>
           {/* 配置试卷 */}
