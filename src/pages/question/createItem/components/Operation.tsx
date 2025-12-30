@@ -181,8 +181,8 @@ const Operation = () => {
         // 填空题：直接使用输入的答案内容
         answerContent = blankAnswer
       } else if (curSelect === 'judge') {
-        // 判断题：使用"对"或"错"
-        answerContent = judgeAnswer === 1 ? '对' : '错'
+        // 判断题：使用"true"或"false"
+        answerContent = judgeAnswer === 1 ? 'true' : 'false'
       } else if (Array.isArray(selectedAnswer)) {
         // 多选题：返回选项标签（如"A,B,C"）
         const answerLabels = selectedAnswer.map(answer => String.fromCharCode(64 + answer))
@@ -198,16 +198,13 @@ const Operation = () => {
       console.log('创建的科目类型：', classifyInfo)
       
       // 构造最终提交的数据，选项格式化为对象数组
-      let formattedOptions: { label: string, value: string }[]
+      let formattedOptions: { label: string, value: string }[] = []
       
-      if (curSelect === 'judge') {
-        // 判断题：使用固定的"对"和"错"选项
-        formattedOptions = [
-          { label: 'A', value: '对' },
-          { label: 'B', value: '错' }
-        ]
+      if (curSelect === 'judge' || curSelect === 'fill') {
+        // 判断题和填空题：传递空数组
+        formattedOptions = []
       } else {
-        // 其他题型：格式化用户输入的选项
+        // 单选题和多选题：格式化用户输入的选项
         formattedOptions = Object.entries(options)
           .filter(([_, value]) => value && value.trim() !== '')
           .map(([key, value]) => ({
@@ -216,14 +213,7 @@ const Operation = () => {
           }))
       }
 
-      const submitData: {
-        question: string
-        answer: string | string[]
-        type: string | number
-        classify: string | number
-        options: { label: string, value: string }[]
-        explanation: string
-      } = {
+      const submitData = {
         question: values.question,
         answer: answerContent,
         type: values.type,
