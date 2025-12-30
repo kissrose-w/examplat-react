@@ -16,6 +16,7 @@ const Login = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const getUserInfo = useUserStore(state => state.getUserInfo)
+  const [session, setSession] = useState<string>()
 
 
   const onFinish = async (values: LoginParams) => {
@@ -27,6 +28,7 @@ const Login = () => {
       if(res.data.code === API_CODE.SUCCESS){
         message.success(res.data.msg)
         setToken(res.data.data.token)
+        setSession(res.data.data.sessionId)
         getUserInfo()
         navigate('/')
       } else if (res.data.code === API_CODE.EXPIRED_CAPTCHA) {

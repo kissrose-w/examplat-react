@@ -21,6 +21,7 @@ export type LoginParams = Record<'username' | 'password' | 'code', string>
 // 登录响应
 export type LoginResponse = {
   token: string
+  sessionId: string
 }
 
 // 权限
