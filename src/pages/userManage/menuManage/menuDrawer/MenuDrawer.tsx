@@ -32,7 +32,7 @@ const MenuDrawer: React.FC<Props> = ({open, setOpen, menuList, onGetPermission})
 
   const onFinish: FormProps<PerCreateP>['onFinish'] = async(values) => {
     console.log('Success:', values)
-    createPermission(values)
+    await createPermission(values)
     onGetPermission()
 
     onClose()
@@ -96,14 +96,25 @@ const MenuDrawer: React.FC<Props> = ({open, setOpen, menuList, onGetPermission})
               <Form.Item
                 name="pid"
                 label="选择菜单等级"
-                rules={[{ required: true, message: 'Please select an owner' }]}
+                rules={[{ required: true, 
+                  message: 'Please select an owner',
+                  validator: (_, value) => {
+                    // 只有 value 是 undefined（未选择任何选项）时才报错
+                    if (value === undefined) {
+                      return Promise.reject(new Error('请选择菜单等级'))
+                    }
+                    // null/其他值都视为已选择，通过校验
+                    return Promise.resolve()
+                  } 
+                }]}
               >
                 <Select
                   placeholder="请选择"
                   options={[
-                    { label: '新建一级菜单', value: '0' }, 
+                    { label: '新建一级菜单', value: null }, 
                     ...newMenuList,
                   ]}
+                  allowClear={false}
                 />
               </Form.Item>
             </Col>

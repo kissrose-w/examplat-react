@@ -3,14 +3,14 @@ import { usersListApi, userSDelApi, userEditApi, userCreateApi} from '@/services
 import UsersList from '../../userManage/userOptions/components/usersList/UsersList'
 import Search from '../../userManage/userOptions/components/search/Search'
 import UserModal from '../../userManage/userOptions/components/userModal/UserModal'
-import type { UsersListResponse } from '@/services'
-import type { UserInfo } from '@/services/type'
+import type { UsersListResponse, UserCreateParams, UserEditParams } from '@/services'
+// import type { UserInfo } from '@/services/type'
 import { message } from 'antd'
 
 const UserOptions = () => {
   const [usersInfo, setUsersInfo] = useState<UsersListResponse[]>([])
   const [total, setTotal] = useState(0)
-  const [originInfo, setOriginInfo] = useState<UserInfo[]>([])
+  const [originInfo, setOriginInfo] = useState<UserEditParams>({} as UserEditParams)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mode, setMode] = useState('create')
   const [loading, setLoading] = useState(false)
@@ -59,15 +59,16 @@ const UserOptions = () => {
   }
 
   // 编辑用户
-  const onEdit = async(editParams: UserInfo) => {
+  const onEdit = async(editParams: UserEditParams) => {
     setLoading(true)
     try {
       const res = await userEditApi(editParams)
       // console.log(res.data)
       if(res.data.code === CodeEum.SUCCESS){
         message.success('编辑成功')
+        getUsers()
       }else{
-        message.error('编辑失败')
+        message.error(res.data.msg)
       }
     } catch (error) {
       console.log(error)
@@ -77,7 +78,7 @@ const UserOptions = () => {
   }
 
   // 创建用户
-  const onCreate = async(createParams: UserInfo) => {
+  const onCreate = async(createParams: UserCreateParams) => {
     setLoading(true)
     try {
       const formattedParams = {
@@ -89,8 +90,9 @@ const UserOptions = () => {
       // console.log(res.data)
       if(res.data.code === CodeEum.SUCCESS){
         message.success('创建成功')
+        getUsers()
       }else{
-        message.error('创建失败')
+        message.error(res.data.msg)
       }
     } catch (error) {
       console.log(error)

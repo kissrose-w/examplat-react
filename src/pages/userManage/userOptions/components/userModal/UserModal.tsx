@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Button, message, Modal } from 'antd'
 import { Form, Input, Select, Space } from 'antd'
-import { userRoleApi, roleUpdateApi } from '@/services'
-import type { UserInfo } from '@/services/type'
-
+import { userRoleApi, roleUpdateApi, userEditApi } from '@/services'
+// import type { UserInfo } from '@/services/type'
+import type {UserCreateParams, UserEditParams } from '@/services'
 
 interface Props {
-  onEdit: (params: UserInfo) => void
-  originInfo: UserInfo
+  onEdit: (params: UserEditParams) => void
+  originInfo: UserEditParams
   setIsModalOpen: (p: boolean) => void
   isModalOpen: boolean
   mode: string,
-  onCreate: (params: UserInfo) => void
+  onCreate: (params: UserCreateParams) => void
 }
 
-const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalOpen, mode, onCreate}) => {
+const UserModal:React.FC<Props & {userId: string}> = ({onEdit, originInfo, setIsModalOpen, isModalOpen, mode, onCreate}) => {
   
   const tailLayout = {
     wrapperCol: { offset: 16, span: 8 },
@@ -35,7 +35,7 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
     }
   }
 
-  const onFinish = (values) => {
+  const onFinish = (values: UserEditParams) => {
     // console.log(values)
     if(mode === 'edit'){
       onEdit(values)
@@ -68,14 +68,13 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
       const res = await userRoleApi()
       // console.log(res.data)
       // console.log(111)
-      
       const options = res.data.data.list.map((item) => {
         return {
           label: item.name,
-          value: item.value}
+          value: item._id
+        }
       })
       // console.log(options)
-      
       setRoleList(options)
     } catch (error) {
       console.log(error)
@@ -89,17 +88,24 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
     }
   },[isModalOpen, mode])
   const onRoleChange = (value: string) => {
-    // roleList.map((item) => {
+    // return roleList.map((item) => {
     //   form.setFieldsValue(item.value)
     // })
     // console.log(value) 
   }
+
   const roleSet = async(values) => {
     // console.log(111)
-    
     try {
-      const res = await roleUpdateApi(values.value)
+      // const res = await roleUpdateApi({
+      //   id: originInfo.id,
+      //   name: values.name
+      // })
       // console.log(res.data)
+      const res = await userEditApi({
+        id: originInfo.id,
+        role: values.name
+      })
       if(res.data.code === 200){
         message.success('分配成功')
       }else{
@@ -122,6 +128,9 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
           name="control-hooks"
           onFinish={onFinish}
         >
+          <Form.Item name="id" initialValue={originInfo.id} hidden>
+            <Input />
+          </Form.Item>
           <Form.Item name="username" label="用户名" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
