@@ -10,9 +10,12 @@ interface State {
   loading: boolean,
   params: {
     page: number,
-    pagesize: number
+    pagesize: number,
+    name?: string,
+    classify?: string,
+    creator?: string
   },
-  getList: (params?: { page?: number, pagesize?: number }) => void
+  getList: (params?: { page?: number, pagesize?: number, name?: string, classify?: string, creator?: string }) => void
 }
 
 export const testListInfo = create<State>((set, get) => ({
