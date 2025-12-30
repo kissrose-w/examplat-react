@@ -145,8 +145,8 @@ export type CreateExamination = {
   name: string,
   classify: string,
   examId: string,
-  group: string,
-  examiner: string,
+  group: string | string[],
+  examiner: string | string[],
   startTime: string,
   endTime: string
 }

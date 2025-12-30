@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { getExaminationListApi, removeExamRecordApi } from '@/services'
+import { getExaminationListApi, getSubjectApi, removeExamRecordApi } from '@/services'
 import React, { useEffect, useMemo, useState } from 'react'
 import style from './record.module.scss'
 import { Button, Flex, message, Table, Tag, type TableColumnsType } from 'antd'
-import type { ExaminationItem } from '@/services/type'
+import type { ExaminationItem, SearchSubjectList } from '@/services/type'
 import Popup from '../components/Popup'
 import { API_CODE } from '@/constants'
 import { ProFormDatePicker, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components'
@@ -22,10 +22,10 @@ const RecordExam = () => {
   })
   const [isShow, setIsShow] = useState(false)
   const [curExam, setCurExam] = useState<ExaminationItem>()
+  const [subList, setSubList] = useState<SearchSubjectList[]>()
 
   // 每一列的设置
   const columns: TableColumnsType<ExaminationItem> = [
-    
     {
       title: '试卷名',
       width: 130,
@@ -41,7 +41,10 @@ const RecordExam = () => {
       className: style.column,
       dataIndex: 'classify',
       key: 'classify',
-      align: 'center'
+      align: 'center',
+      render: (_) => {
+        return subList?.find(v => v._id === _)?.name
+      }
     },
     {
       title: '开始时间',
@@ -73,10 +76,12 @@ const RecordExam = () => {
       key: 'status',
       align: 'center',
       render: (_) => {
-        return _ === 1 ?
-          <Tag color='green'>已结束</Tag>
-          :
-          '— —'
+        switch(_) {
+        case 0: return <Tag color='purple'>未开始</Tag>
+        case 1: return <Tag color='green'>进行中</Tag>
+        case 2: return <Tag color='volcano'>已结束</Tag>
+        default: return '— —'
+        }
       }
     },
     {
@@ -87,7 +92,7 @@ const RecordExam = () => {
       key: 'examiner',
       align: 'center',
       render: (_) => {
-        return _.length !== 0 ? _ : '— —'
+        return _.length !== 0 ? _.join('、') : '— —'
       }
     },
     {
@@ -98,7 +103,7 @@ const RecordExam = () => {
       key: 'group',
       align: 'center',
       render: (_) => {
-        return _.length === 0 || _[0] === null ? '— —' : _
+        return _.length === 0 || _[0] === null ? '— —' : _.join('、')
       }
     },
     {
@@ -180,6 +185,20 @@ const RecordExam = () => {
       setLoading(false)
     }
   }
+
+  const getSubjectList = async () => {
+    try {
+      const res = await getSubjectApi()
+      setSubList(res.data.data.list)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // 进页面调用
+  useEffect(() => {
+    getSubjectList()
+  }, [])
 
   // 根据参数的变化实时调用
   useEffect(() => {

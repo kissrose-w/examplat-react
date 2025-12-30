@@ -3,6 +3,7 @@ import { Descriptions } from 'antd'
 import type { CreateExamination, GroupItem } from '@/services/type'
 import type { DescriptionsProps } from 'antd'
 import { createStyles } from 'antd-style'
+import { showGroupName } from '@/utils'
 
 
 interface Props {
@@ -44,36 +45,54 @@ const label = {
 
 const Public: React.FC<Props> = ({examInfo, groups}) => {
 
-  console.log(examInfo)
-  console.log(groups)
+  // console.log(examInfo)
+  // console.log(groups)
 
   const { styles: info } = useStyle()
 
   const infoItems = useMemo(() => {
     // 根据id找到对应的班级名称
-    const group = groups.find(v => v._id === examInfo.group)
+    let group = ''
+    let gA: string[] = []
+    if(typeof examInfo.group === 'string') {
+      group = groups.find(v => v._id === examInfo.group)?.name as string
+    } else {
+      gA = showGroupName(examInfo.group, groups)
+    }
+   
     console.log(groups)
-    console.log(group?.name)
+    console.log(group)
     // 只处理label对象中定义的字段
-    const items = Object.keys(label).map(key => {
+    const items = Object.keys(label).map((key, index) => {
       const fieldKey = key as keyof typeof label
       const value = examInfo[fieldKey]
       let displayValue = value
 
+      // 当label为班级时，根据不同数据类型渲染
       if (fieldKey === 'group') {
-        displayValue = group?.name ?? '-'
+        displayValue = (group || gA.join('、')) ?? '---'
+        // 处理值为 null 或 undefined的渲染
       } else if (value === undefined || value === null) {
-        displayValue = '-'
+        displayValue = '---'
+        // 处理数组的渲染
       } else if (typeof value === 'object') {
-        displayValue = JSON.stringify(value)
+        displayValue = value.join('、')
       } else {
         displayValue = value
       }
 
+      if(index === 3) {
+        return {
+          key: fieldKey,
+          label: label[fieldKey],
+          children: displayValue,
+          span: 3
+        }
+      }
       return {
         key: fieldKey,
         label: label[fieldKey],
-        children: displayValue
+        children: displayValue,
       }
     })
     return items
@@ -88,10 +107,7 @@ const Public: React.FC<Props> = ({examInfo, groups}) => {
         bordered={true}
         classNames={info}
         items={infoItems}
-      >
-        <Descriptions.Item label="文本">
-        </Descriptions.Item>
-      </Descriptions>
+      />
     </div>
   )
 }
