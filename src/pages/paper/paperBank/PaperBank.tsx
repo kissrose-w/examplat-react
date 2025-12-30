@@ -1,4 +1,4 @@
-import { delTestPaper } from '@/services'
+import { delTestPaper, getTestPaperList } from '@/services'
 import type { TestListItem } from '@/services/type'
 import { useEffect, useState, useMemo } from 'react'
 import { message, Button } from 'antd'
@@ -20,6 +20,7 @@ const PaperBank = () => {
   const [open, setOpen] = useState(false) //预览开关
   const [previewLoading, setPreviewLoading] = useState(true) //预览loading
   const [previewList, setPreviewList] = useState<TestListItem>() //预览数据
+  const [allTestPapers, setAllTestPapers] = useState<TestListItem[]>([]) // 所有试卷数据，用于生成完整的搜索选项
   const { loading, total, testList, getList, params } = testListInfo() // 从store中获取数据
   const navigate = useNavigate()
 
@@ -37,27 +38,44 @@ const PaperBank = () => {
     getList()
   }, [getList])
 
-  // 使用useMemo根据testList计算唯一的creator列表
+  // 在组件加载时获取所有试卷数据，用于生成完整的搜索选项
+  useEffect(() => {
+    const fetchAllTestPapers = async () => {
+      try {
+        // 调用API获取所有试卷数据，设置较大的pagesize
+        const res = await getTestPaperList({ page: 1, pagesize: 100 })
+        if (res.data.code === API_CODE.SUCCESS) {
+          console.log(res.data.data.list)
+          setAllTestPapers(res.data.data.list)
+        }
+      } catch (e) {
+        console.log('获取所有试卷数据失败:', e)
+      }
+    }
+    fetchAllTestPapers()
+  }, [])
+
+  // 使用useMemo根据allTestPapers计算唯一的creator列表
   const creators = useMemo<string[]>(() => {
-    // 确保testList是数组且有数据
-    if (Array.isArray(testList) && testList.length > 0) {
+    // 确保allTestPapers是数组且有数据
+    if (Array.isArray(allTestPapers) && allTestPapers.length > 0) {
       return Array.from(
-        new Set(testList.map((item: TestListItem) => item.creator))
+        new Set(allTestPapers.map((item: TestListItem) => item.creator))
       )
     }
     return []
-  }, [testList])
+  }, [allTestPapers])
   
   // 科目
   const subjects = useMemo<string[]>(() => {
-    // 确保testList是数组且有数据
-    if (Array.isArray(testList) && testList.length > 0) {
+    // 确保allTestPapers是数组且有数据
+    if (Array.isArray(allTestPapers) && allTestPapers.length > 0) {
       return Array.from(
-        new Set(testList.map((item: TestListItem) => item.classify))
+        new Set(allTestPapers.map((item: TestListItem) => item.classify))
       )
     }
     return []
-  }, [testList])
+  }, [allTestPapers])
 
   // 分页
   const pagination = {
@@ -89,6 +107,8 @@ const PaperBank = () => {
         message.success('删除成功')
         // 删除成功后，调用getList更新数据
         getList(params)
+        // 更新allTestPapers，过滤掉已删除的试卷
+        setAllTestPapers(prev => prev.filter(item => item._id !== id))
       } else {
         message.error(res.data.msg)
       }
