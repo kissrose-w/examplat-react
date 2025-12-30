@@ -1,15 +1,15 @@
 import React from 'react'
 import { Space, Table, Tag, Switch} from 'antd'
 import type { TableProps} from 'antd'
-import type { UsersListResponse, UsersListParams } from '@/services'
-import type { UserInfo } from '@/services/type'
+import type { UsersListResponse, UsersListParams, UserEditParams } from '@/services'
+// import type { UserInfo } from '@/services/type'
 type Props = {
   usersInfo: UsersListResponse[]
   params: UsersListParams
   onSetParams: (params: UsersListParams) => void
   total: number
   onDel: (id: string) => void
-  onSetOriginInfo: (params: UserInfo) => void
+  onSetOriginInfo: (params: UserEditParams) => void
   setIsModalOpen: (p: boolean) => void
   setMode: (p: string) => void
 }
@@ -17,7 +17,7 @@ type Props = {
 const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel, onSetOriginInfo,setIsModalOpen, setMode}) => {
 
   
-  const changeSwitch = (checked: boolean) => {
+  const changeSwitch = (checked: boolean, record: UsersListResponse) => {
     console.log(`switch to ${checked}`)
   }
   
@@ -79,7 +79,7 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
       title: '最近登录时间',
       dataIndex: 'lastOnlineTime',
       key: 'lastOnlineTime',
-      render: (_) => _ ??  ' __',
+      render: (_, record) => new Date( record.lastOnlineTime).toLocaleString(),
       width: 200,
       align: 'center'
     },
@@ -103,12 +103,13 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
       render: (_, record) => (
         <Space>
           <Tag color='green' onClick={() => {
+            onSetOriginInfo({...record, id: record._id})
             setIsModalOpen(true)
             setMode('distribute')
           }}>分配角色</Tag>
           <Tag color='blue' onClick={() => {
             // console.log(record)
-            onSetOriginInfo(record)
+            onSetOriginInfo({...record, id: record._id})
             setIsModalOpen(true)
             setMode('edit')
           }}>编辑</Tag>

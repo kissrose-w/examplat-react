@@ -34,7 +34,7 @@ export type PermissionItem = {
 export type UserInfo = {
   _id: string
   username: string
-  sex: string
+  sex: 0 | 1
   avator: string
   email: string
   age: number

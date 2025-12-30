@@ -8,7 +8,7 @@ interface Props {
   open: boolean
   setOpen: (p: boolean) => void
   permissionList: PermissionType[]
-  itemPer: string[]
+  itemPer: string[] | undefined
   editP: {
     _id: string
     name?: string
@@ -17,7 +17,7 @@ interface Props {
   onSuccess?: () => void  
 }
 
-const RoleDrawer: React.FC<Props> = ({open, setOpen, itemPer, editP,permissionList,
+const RoleDrawer: React.FC<Props> = ({open, setOpen, itemPer, editP, permissionList,
   onSuccess}) => {
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([])
 

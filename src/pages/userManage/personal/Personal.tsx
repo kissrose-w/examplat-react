@@ -17,9 +17,10 @@ const Personal = () => {
       <Avatar />
       <div style={{marginTop: 20}}>
         <p>用户名：{userInfo?.username}</p>
-        <p>性别：{userInfo?.sex}</p>
+        <p>性别：{userInfo?.sex === 1 ? '男' : '女'}</p>
         <p>年龄：{userInfo?.age}</p>
         <p>邮箱地址：{userInfo?.email}</p>
+        <p>id: {userInfo?._id}</p>
       </div>
       <Button type="primary" onClick={showModal} style={{marginTop: 15}}>
         编辑个人信息

@@ -91,13 +91,14 @@ export type UsersListResponse = {
   '_id': string
   'username': string
   'password': string
-  'status': number
-  '__v': number
+  'status': 0 | 1
+  '__v': number,
+  'lastOnlineTime'?: string
 }
 // 获取用户列表
 export const usersListApi = (params?: UsersListParams) => {
-  return request.get<Base<UserInfo[]>>('/user/list', {
-    params: params || ''
+  return request.get<Base<UsersListResponse[]>>('/user/list', {
+    params: params || {}
   })}
 
 // 删除用户
@@ -105,19 +106,32 @@ export const userSDelApi = (id: string) => {
   return request.post<Omit<Base,'data'>>('/user/remove', {id})
 }
 
+export type UserCreateParams = {
+  username?: string,
+  password?: string,
+  email?: string,
+  sex?: 0 | 1,
+  age?: number,
+  role?: []
+}
+
+export type UserEditParams = UserCreateParams & {
+  id : string
+  status?: 0 | 1 
+}
 // 编辑用户
-export const userEditApi = (params: UserInfo) => {
+export const userEditApi = (params: UserEditParams) => {
   return request.post<Omit<Base,'data'>>('/user/update', params)
 }
 
 // 创建用户
-export const userCreateApi = (params: UserInfo) => {
+export const userCreateApi = (params: UserCreateParams) => {
   return request.post<Omit<Base,'data'>>('/user/create', params)
 }
 
 // 查询角色接口
 export const userRoleApi = () => {
-  return request.get<Base<PermissionType>>('/role/list')
+  return request.get<Base<PermissionType[]>>('/role/list')
 }
 
 // 编辑角色接口
@@ -135,7 +149,7 @@ export const roleRemoveApi = (id: string) => {
 export type RoleCreateP = {
   _id?: string
   name: string
-  value: string
+  creator?: string
   createdAt?: string
   description: string
 }
