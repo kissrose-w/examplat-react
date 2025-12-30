@@ -26,11 +26,6 @@ interface Props {
   onSearch: (validValues: Partial<FormValues>) => void
   onLoading: () => void
   onDelPaper: (id: string) => Promise<void>
-  setSearchConditions: (value: object) => void
-  setParams: (params: {
-    page: number;
-    pagesize: number;
-  }) => void
   setPreviewList: (value: TestListItem) => void
   pagination: PaginationParams // 添加pagination类型定义
 }
@@ -43,8 +38,6 @@ const Search: React.FC<Props> = ({
   onSearch,
   onLoading,
   onDelPaper,
-  setSearchConditions,
-  setParams,
   setPreviewList,
   pagination
 }) => {
@@ -59,9 +52,6 @@ const Search: React.FC<Props> = ({
           <Form.Item
             name='name'
             label='试卷名称'
-            rules={[
-              { message: 'Input something!' },
-            ]}
           >
             <Input placeholder='请输入' />
           </Form.Item>
@@ -70,12 +60,10 @@ const Search: React.FC<Props> = ({
           <Form.Item
             name='creator'
             label='创建人'
-            rules={[
-              { message: 'Select something!' },
-            ]}
           >
             <Select
               placeholder='请选择'
+              allowClear
               options={creators.map(item => ({
                 value: item,
                 label: item
@@ -87,12 +75,10 @@ const Search: React.FC<Props> = ({
           <Form.Item
             name='subject'
             label='查询科目'
-            rules={[
-              { message: 'Select something!' },
-            ]}
           >
             <Select
               placeholder='请选择'
+              allowClear
               options={subjects.map(item => ({
                 value: item,
                 label: item
@@ -103,10 +89,8 @@ const Search: React.FC<Props> = ({
         <Col push={2} span={6}>
           <Button style={{marginRight: 10}} onClick={() => {
             form.resetFields()
-            // 清空搜索条件
-            setSearchConditions({})
-            // 重置页码到第1页
-            setParams({ page: 1, pagesize: 5 })
+            // 清空搜索条件并重置页码
+            onSearch({})
           }}>重置</Button>
           <Button type='primary' onClick={() => {
             // 验证表单，类型从Form.useForm<FormValues>()推断

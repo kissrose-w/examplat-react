@@ -1,0 +1,51 @@
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.subType {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.des {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+.num {
+  font-weight: normal;
+}
+.choiceType {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+.conTit {
+  font-weight: bolder;
+}
+.judge {
+  display: flex;
+  margin-top: 10px;
+}
+/* 题目区块样式 */
+.questionSection {
+  margin: 20px 0;
+  padding: 16px;
+  // background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+/* 区块标题样式 */
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1890ff;
+  // border-bottom: 2px solid #1890ff;
+  padding-bottom: 8px;
+}
+/* 填空题提示样式 */
+.blankTip {
+  font-style: italic;
+  color: #8c8c8c;
+  margin: 8px 0;
+}

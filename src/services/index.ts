@@ -18,7 +18,8 @@ import type {
   GroupResponse,
   ClassifyList,
   TestPaperDetail,
-  CreateExamination
+  createTestParams,
+  TestCreate
 } from '@/services/type'
 import request from './request'
 
@@ -259,8 +260,8 @@ export const delTestPaper = (id: string) => {
 }
 
 // 获取试卷科目
-export const getClassifyList = (params: TestParams) => {
-  return request.get<BaseResponse<ClassifyList>>('/classify/list', { params })
+export const getClassifyList = () => {
+  return request.get<BaseResponse<ClassifyList>>('/classify/list')
 }
 
 // 试卷详情
@@ -270,14 +271,7 @@ export const getTestPaperDetail = (id: string) => {
   })
 }
 
-//创建试题
-export const getCreatQuestionApi = (params: {
-  question: string
-  answer: string | string[]
-  type: string | number
-  classify: string | number
-  options: string[]
-  explanation: string
-}) => {
-  return request.post<BaseResponse>('/question/create', params)
+// 创建试卷
+export const createTestPaper = (params: createTestParams) => {
+  return request.post<BaseResponse<TestCreate>>('/exam/create', params)
 }
