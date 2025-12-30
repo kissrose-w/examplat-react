@@ -12,11 +12,12 @@ export type BaseResponse<T = never> = {
 // 验证码图片参数
 export type CaptchaResponse = {
   code: string,
-  text: string
+  text: string,
+  sessionId: string
 }
 
 // 登录参数
-export type LoginParams = Record<'username' | 'password' | 'code', string>
+export type LoginParams = Record<'username' | 'password' | 'code' | 'sessionId', string>
 
 // 登录响应
 export type LoginResponse = {
@@ -139,6 +140,17 @@ export type QuestionItem = {
   _id: string
 }
 
+// 创建考试
+export type CreateExamination = {
+  name: string,
+  classify: string,
+  examId: string,
+  group: string,
+  examiner: string,
+  startTime: string,
+  endTime: string
+}
+
 //科目查询list
 export type SearchSubjectList = {
   _id: string
@@ -249,3 +261,6 @@ export type TestPaperDetail = {
   classify: string
   questions: TestDetailQues[]
 }
+
+//试题创建参数
+export type CreatQuestion = Omit<TestDetailQues, '_id' | '__v'>

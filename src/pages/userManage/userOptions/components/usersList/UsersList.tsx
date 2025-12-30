@@ -1,4 +1,4 @@
-import React,{ useState} from 'react'
+import React from 'react'
 import { Space, Table, Tag, Switch} from 'antd'
 import type { TableProps} from 'antd'
 import type { UsersListResponse, UsersListParams } from '@/services'
@@ -127,6 +127,7 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
         columns={columns} 
         scroll={{ x: 1200 }}
         dataSource={usersInfo}
+        rowKey="_id"
         pagination={
           {
             showSizeChanger: true,

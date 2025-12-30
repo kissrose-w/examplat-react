@@ -1,23 +1,26 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import dayjs from 'dayjs'
 import type { ProFormInstance } from '@ant-design/pro-components'
 import {
   ProCard,
-  ProFormCheckbox,
   ProFormDateTimeRangePicker,
   ProFormSelect,
   ProFormText,
   StepsForm,
-  ProTable
 } from '@ant-design/pro-components'
 import { message } from 'antd'
 import {
   getSubjectApi,
   usersListApi,
   getGroupListApi,
-  getTestPaperList
+  getTestPaperList,
+  createExamApi
 } from '@/services'
-import type { GroupItem, SearchSubjectList, TestListItem, UserInfo } from '@/services/type'
-import style from './createExam.module.scss'
+import type { CreateExamination, GroupItem, SearchSubjectList, TestListItem, UserInfo } from '@/services/type'
+import Public from './components/public/Public'
+import Config from './components/config/Config'
+import { API_CODE } from '@/constants'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -28,7 +31,17 @@ const CreateExam = () => {
   const [userList, setUserList] = useState<UserInfo[]>()
   const [groupList, setGroupList] = useState<GroupItem[]>()
   const [paperList, setPaperList] = useState<TestListItem[]>()
-  const [selected, setSelected] = useState()
+  const [crParams, setCrParams] = useState<CreateExamination>({
+    name: '',
+    classify: '',
+    examId: '',
+    group: '',
+    examiner: '',
+    startTime: '',
+    endTime: ''
+  })
+  const [curSub, setCurSub] = useState<string>()
+  const navigate = useNavigate()
 
   // 获取各个数据列表
   const getSubject = async () => {
@@ -37,10 +50,10 @@ const CreateExam = () => {
       const userRes = await usersListApi()
       const groupRes = await getGroupListApi()
       const paperRes = await getTestPaperList()
-      console.log(res)
-      console.log(userRes)
-      console.log(groupRes)
-      console.log(paperRes)
+      // console.log(res)
+      // console.log(userRes)
+      // console.log(groupRes)
+      // console.log(paperRes)
       Promise.resolve().then(() => {
         setSubList(res.data.data.list)
         setUserList(userRes.data.data.list)
@@ -86,13 +99,14 @@ const CreateExam = () => {
   }, [groupList])
 
   const paperOptions = useMemo(() => {
-    return paperList?.map(item => {
+    const filPapers = paperList?.filter(v => v.classify === curSub)
+    return filPapers?.map(item => {
       return {
         ...item,
         key: item._id
       }
-    })
-  }, [paperList])
+    }) as (TestListItem & {key: string})[]
+  }, [paperList, curSub])
 
 
   // 配置试卷中表格列项
@@ -122,15 +136,40 @@ const CreateExam = () => {
     }
   ]
 
+
+  // 提交后调用创建考试
+  const createExam = async (params: CreateExamination) => {
+    const start = (Date.parse(params.startTime)) + ''
+    const end = (Date.parse(params.endTime)) + ''
+    const cPa = {
+      ...params,
+      startTime: start,
+      endTime: end
+    } as CreateExamination
+    try {
+      const res = await createExamApi(cPa)
+      console.log(res)
+      if(res.data.code === API_CODE.SUCCESS){
+        message.success(res.data.msg)
+        navigate('/exam/record')
+        formRef.current?.resetFields()
+      } else {
+        message.error(res.data.msg)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <div>
       <ProCard>
-        <StepsForm<{
-          name: string
-        }>
+        <StepsForm<CreateExamination>
           formRef={formRef}
           onFinish={async () => {
             message.success('提交成功')
+            console.log(crParams)
+            createExam(crParams)
           }}
           formProps={{
             validateMessages: {
@@ -139,14 +178,26 @@ const CreateExam = () => {
           }}
         >
           {/* 考试基本信息 */}
-          <StepsForm.StepForm<{
-            name: string
-          }>
-            name="base"
+          <StepsForm.StepForm<CreateExamination>
             title="考试基本信息"
             
             onFinish={async () => {
               console.log(formRef.current?.getFieldsValue())
+              const base = formRef.current?.getFieldsValue()
+              // 转换dateTime为startTime和endTime字符串
+              const startTimeStr = dayjs(base.dateTime[0]).format('YYYY-MM-DD HH:mm:ss')
+              const endTimeStr = dayjs(base.dateTime[1]).format('YYYY-MM-DD HH:mm:ss')
+              // 移除原始dateTime字段，避免React渲染dayjs对象
+              const { dateTime, ...rest } = base
+              const updatedValues = {
+                ...rest,
+                startTime: startTimeStr,
+                endTime: endTimeStr
+              }
+              formRef.current?.setFieldsValue(updatedValues)
+              setCrParams(updatedValues)
+              console.log(updatedValues)
+              
               return true
             }}
           >
@@ -156,107 +207,73 @@ const CreateExam = () => {
               width="md"
               tooltip="最长为 24 位，用于标定的唯一 id"
               placeholder="请输入名称"
-              // rules={[{ required: true }]}
+              rules={[{ required: true }]}
             />
-            <ProFormDateTimeRangePicker name="dateTime" label="考试时间" />
+            <ProFormDateTimeRangePicker rules={[{ required: true }]} name="dateTime" label="考试时间" />
             <ProFormSelect
               label="科目分类"
               name='classify'
               options={subOptions}
               placeholder="请选择"
+              rules={[{ required: true }]}
+              onChange={(val: string) => {
+                // console.log(val)
+                setCurSub(val)
+              }}
             />
             <ProFormSelect
               label="监考人"
-              name='examin'
+              name='examiner'
               options={userOptions}
+              rules={[{ required: true }]}
             />
             <ProFormSelect
               label="考试班级"
               name='group'
               options={groupOptions}
+              rules={[{ required: true }]}
             />
           </StepsForm.StepForm>
           {/* 配置试卷 */}
-          <StepsForm.StepForm<{
-            radio: string
-          }>
-            name="radio"
+          <StepsForm.StepForm<CreateExamination>
             title="配置试卷"
-            onFinish={async (values) => {
-              console.log(values)
+            onFinish={async () => {
+              const id = formRef.current?.getFieldValue('examId')
+              console.log(formRef.current?.getFieldValue('examId'))
+              if(!id) {
+                message.error('请选择试卷')
+                return false
+              }
+              formRef.current?.setFieldsValue({
+                examId: id
+              })
+              // 更新crParams状态，确保包含当前步骤的数据
+              setCrParams(prev => ({
+                ...prev,
+                examId: id
+              }))
               console.log(formRef.current?.getFieldsValue())
+              console.log(crParams)
               return true
             }}
           >
-            <ProTable
-              className={style.proTable}
+            <Config
               columns={columns}
-              dataSource={paperOptions}
-              rowKey="key"
-              pagination={{
-                pageSize: 8,
-                showQuickJumper: true,
-              }}
-              search={false}
-              dateFormatter="string"
-              options={false}
-              rowSelection={{
-                type: 'radio',
-                onChange: (key) => {
-                  console.log(key)
-                  formRef.current?.setFieldsValue({
-                    examId: key[0],
-                  })
-                }
-              }}
-              tableAlertRender={false}
+              paperOptions={paperOptions}
+              formRef={formRef}
+              onSaveId={setCrParams}
             />
             
           </StepsForm.StepForm>
           {/* 发布考试 */}
-          <StepsForm.StepForm
-            name="time"
+          <StepsForm.StepForm<CreateExamination>
             title="发布考试"
+            onFinish={async () => {
+              console.log(crParams)
+              return true
+            }}
           >
-            <ProFormCheckbox.Group
-              name="checkbox"
-              label="部署单元"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              options={['部署单元1', '部署单元2', '部署单元3']}
-            />
-            <ProFormSelect
-              label="部署分组策略"
-              name="remark"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              initialValue="1"
-              options={[
-                {
-                  value: '1',
-                  label: '策略一',
-                },
-                { value: '2', label: '策略二' },
-              ]}
-            />
-            <ProFormSelect
-              label="Pod 调度策略"
-              name="remark2"
-              initialValue="2"
-              options={[
-                {
-                  value: '1',
-                  label: '策略一',
-                },
-                { value: '2', label: '策略二' },
-              ]}
-            />
+            <Public examInfo={crParams} groups={groupList || []} />
           </StepsForm.StepForm>
         </StepsForm>
       </ProCard>

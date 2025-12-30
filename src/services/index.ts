@@ -17,7 +17,8 @@ import type {
   QuestionTypeValue,
   GroupResponse,
   ClassifyList,
-  TestPaperDetail
+  TestPaperDetail,
+  CreateExamination
 } from '@/services/type'
 import request from './request'
 
@@ -61,6 +62,11 @@ export const getExaminationListApi = (params: QueryParams) => {
 // 删除考试记录
 export const removeExamRecordApi = (id: string) => {
   return request.post<BaseResponse>('/examination/remove', {id})
+}
+
+// 创建考试
+export const createExamApi = (params: CreateExamination) => {
+  return request.post<BaseResponse>(`/examination/create?${Date.now()}`, params)
 }
 
 
@@ -163,9 +169,39 @@ export const getPermissionApi = () => {
 export const permissionEditApi = (params: {
   id: string,
   name?: string,
-  permission?: string[]
+  path?: string,
+  isBtn?: boolean
 }) => {
   return request.post('/permission/update', params)
+}
+
+// 删除权限菜单
+export const permissionRemoveApi = (id: string) => {
+  return request.post<Base>('/permission/remove', {id})
+}
+
+export type PerCreateP = {
+  pid?: string,
+  name?: string,
+  path: string,
+  disabled: boolean,
+  isBtn?: boolean
+}
+// 创建权限菜单
+export const permissionCreateApi = (params: PerCreateP) => {
+  return request.post<Base>('/permission/create', params)
+}
+
+export type PersonalP = {
+  username: string
+  age: number
+  sex: 0 | 1
+  email: string
+}
+
+// 修改个人信息
+export const personalEditApi = (params: PersonalP) => {
+  return request.post('/user/update/info', params)
 }
 
 
@@ -232,4 +268,16 @@ export const getTestPaperDetail = (id: string) => {
   return request.get<BaseResponse<TestPaperDetail>>('/exam/detail', {
     params: { id }
   })
+}
+
+//创建试题
+export const getCreatQuestionApi = (params: {
+  question: string
+  answer: string | string[]
+  type: string | number
+  classify: string | number
+  options: string[]
+  explanation: string
+}) => {
+  return request.post<BaseResponse>('/question/create', params)
 }
