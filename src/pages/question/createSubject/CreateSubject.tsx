@@ -169,8 +169,8 @@ const CreateCategory = () => {
     },
     {
       title: '科目内容',
-      dataIndex: 'value',
-      key: 'value',
+      dataIndex: 'description',
+      key: 'description',
       width: 250,
       editable: true,
     },

@@ -243,8 +243,8 @@ export const getQuestionTypeApi = () =>{
 }
 
 //编辑题目接口
-export const getQuestionEditApi = (id: string, question: string) =>{
-  return request.post<SubjectCreat>('/question/update',{id,question})
+export const getQuestionEditApi = (_id: string, question: string) =>{
+  return request.post<SubjectCreat>('/question/update',{_id,question})
 }
 // 查询试卷列表
 export const getTestPaperList = (params?: TestParams) => {
