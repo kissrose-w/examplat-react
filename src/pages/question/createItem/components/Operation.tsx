@@ -30,7 +30,7 @@ const Operation = () => {
   const [form] = Form.useForm<FormFields>()
   const [typeData, setTypeData] = useState<QuestionTypeItem[]>([])
   const [classifyData, setClassifyData] = useState<SearchSubjectList[]>([])
-  const [curSelect, setCurSelect] = useState<number | string>(0)
+  const [curSelect, setCurSelect] = useState<string>('')
   // 选项内容状态，保存每个选项的输入值
   const [options, setOptions] = useState<OptionsType>({
     1: '', // A选项
@@ -55,7 +55,7 @@ const Operation = () => {
     return list.map((item,index )=> {
       return {
         label: item.name,
-        value: item.value,
+        value: item.value ?? item._id,
         key: `${item.value || index}-${index}`
       }
     })
@@ -98,7 +98,7 @@ const Operation = () => {
   // 处理单选答案变化
   const handleRadioAnswerChange = (e: RadioChangeEvent) => {
     const value = Number(e.target.value)
-    if (curSelect === 3) { // 判断题
+    if (curSelect === 'judge') { // 判断题
       setJudgeAnswer(value) // 更新判断题答案变量1
     } else { // 单选题
       setSelectedAnswer(value) // 更新单选题答案
@@ -122,7 +122,7 @@ const Operation = () => {
     setSelectedAnswer(1)
     setJudgeAnswer(1)
     setBlankAnswer('')
-    setCurSelect(0)
+    setCurSelect('')
   }
 
   // 处理表单提交
@@ -131,7 +131,7 @@ const Operation = () => {
       // 自定义验证逻辑
       let validationError = ''
       
-      if (curSelect === 1) { // 单选题
+      if (curSelect === 'single') { // 单选题
         // 检查是否选择了答案
         if (!selectedAnswer) {
           validationError = '请选择单选题答案'
@@ -142,7 +142,7 @@ const Operation = () => {
             validationError = '请确保选择的选项内容不为空'
           }
         }
-      } else if (curSelect === 2) { // 多选题
+      } else if (curSelect === 'multiple') { // 多选题
         // 检查是否至少选择了两个答案
         const selectedAnswers = Array.isArray(selectedAnswer) ? selectedAnswer : []
         if (selectedAnswers.length < 2) {
@@ -157,12 +157,12 @@ const Operation = () => {
             validationError = '请确保所有选择的选项内容不为空'
           }
         }
-      } else if (curSelect === 3) { // 判断题
+      } else if (curSelect === 'judge') { // 判断题
         // 检查是否选择了答案
         if (!judgeAnswer) {
           validationError = '请选择判断题答案'
         }
-      } else if (curSelect === 4) { // 填空题
+      } else if (curSelect === 'fill') { // 填空题
         // 检查是否输入了答案
         if (!blankAnswer.trim()) {
           validationError = '请输入填空题答案'
@@ -177,7 +177,7 @@ const Operation = () => {
       
       // 获取选中的答案内容
       let answerContent: string | string[] = ''
-      if (curSelect === 4) {
+      if (curSelect === 'fill') {
         // 填空题：直接使用输入的答案内容
         answerContent = blankAnswer
       } else if (Array.isArray(selectedAnswer)) {
@@ -185,7 +185,7 @@ const Operation = () => {
         answerContent = selectedAnswer.map(answer => options[answer] || '')
       } else {
         // 单选题/判断题：获取单个选中选项的内容
-        const answerValue = curSelect === 3 ? judgeAnswer : (selectedAnswer as number)
+        const answerValue = curSelect === 'judge' ? judgeAnswer : (selectedAnswer as number)
         answerContent = options[answerValue] || ''
       }
       
@@ -209,7 +209,7 @@ const Operation = () => {
       console.log('选中的答案：', answerContent)
       console.log('所有表单数据：', values)
       console.log('选项内容：', options)
-      console.log('选中的答案索引：', curSelect === 3 ? judgeAnswer : selectedAnswer)
+      console.log('选中的答案索引：', curSelect === 'judge' ? judgeAnswer : selectedAnswer)
       console.log('判断题答案变量1：', judgeAnswer)
       console.log('填空题答案：', blankAnswer)
       console.log('最终提交数据：', submitData)
@@ -246,11 +246,11 @@ const Operation = () => {
               onChange={value => {
                 setCurSelect(value)
                 // 题型切换时，重置选中答案为正确的类型
-                if (value === 2) { // 多选题
+                if (value === 'multiple') { // 多选题
                   setSelectedAnswer([]) // 多选题默认空数组
-                } else if (value === 3) { // 判断题
+                } else if (value === 'judge') { // 判断题
                   setJudgeAnswer(1) // 判断题答案变量1默认值为1
-                } else if (value === 4) { // 填空题
+                } else if (value === 'fill') { // 填空题
                   setBlankAnswer('') // 填空题默认空字符串
                 } else { // 单选题
                   setSelectedAnswer(1) // 单选题默认选中第一个选项
@@ -274,7 +274,7 @@ const Operation = () => {
       </Form.Item>
       <OptionRenderer
         curSelect={curSelect}
-        selectedAnswer={curSelect === 3 ? judgeAnswer : selectedAnswer}
+        selectedAnswer={curSelect === 'judge' ? judgeAnswer : selectedAnswer}
         options={options}
         blankAnswer={blankAnswer}
         handleOptionChange={handleOptionChange}

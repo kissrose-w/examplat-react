@@ -18,7 +18,7 @@ const Search:React.FC<Props> = ({onChange, onInpChange, onChangeClassify}) => {
     return list.map((item,index )=> {
       return {
         label: item.name,
-        value: item.value,
+        value: item.value ?? item._id,
         key: `${item.value || index}-${index}`
       }
     })
@@ -70,7 +70,7 @@ const Search:React.FC<Props> = ({onChange, onInpChange, onChangeClassify}) => {
         />
       </Form.Item>
       <Form.Item label="题目类型" style={{width: 300}}>
-        <Select options={formatMenuList(classifyData)}  onChange={value => onChangeClassify(value) }/>
+        <Select options={formatMenuList(classifyData)} placeholder="请选择科目" onChange={value => onChangeClassify(value) }/>
       </Form.Item>
     </Form>
   )

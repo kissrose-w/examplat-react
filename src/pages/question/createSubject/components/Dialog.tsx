@@ -19,7 +19,7 @@ const Dialog:React.FC<Props> = ({onChange, isModalOpen, onCreat, editData, onEdi
       if(isEdit){
         form.setFieldsValue({
           name: editData.name || '',
-          value: editData.value || ''
+          description: editData.description || ''
         })
       }else{
         form.resetFields()
@@ -69,7 +69,7 @@ const Dialog:React.FC<Props> = ({onChange, isModalOpen, onCreat, editData, onEdi
 
           <Form.Item<FieldType>
             label="科目内容"
-            name="value"
+            name="description"
             rules={[{ required: true, message: '请输入科目描述' }]}
           >
             <Input />
