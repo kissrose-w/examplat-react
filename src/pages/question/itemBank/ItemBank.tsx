@@ -12,7 +12,7 @@ interface DataType {
   question: string;
   type: number;
   _id: string;
-  options: string[];
+  options: { label: string, value: string }[];
   classify: string
 }
 

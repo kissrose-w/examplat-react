@@ -133,7 +133,7 @@ export type ExaminationItem = {
 export type QuestionItem = {
   answer: string,
   classify: string,
-  options: string[],
+  options: { label: string, value: string }[],
   question: string,
   type: string,
   __v: number,
@@ -185,7 +185,7 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: string[]
+  options: { label: string, value: string }[]
   question: string
   type: 0 | 1 | 2 | 3
   __v: number
@@ -248,9 +248,9 @@ export type TestDetailQues = {
   _id: string
   question: string
   type: string
-  classify: string
+  classify: string | { _id: string, name: string }
   answer: string
-  options: string[]
+  options: { label: string, value: string }[]
   desc: string
   __v: number
 }
@@ -263,4 +263,11 @@ export type TestPaperDetail = {
 }
 
 //试题创建参数
-export type CreatQuestion = Omit<TestDetailQues, '_id' | '__v'>
+export type CreatQuestion = {
+  question: string
+  type: string
+  classify: string | { _id: string, name: string }
+  answer: string
+  options: { label: string, value: string }[]
+  explanation: string
+}
