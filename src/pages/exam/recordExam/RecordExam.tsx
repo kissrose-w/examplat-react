@@ -6,6 +6,7 @@ import { Button, Flex, message, Table, Tag, type TableColumnsType } from 'antd'
 import type { ExaminationItem } from '@/services/type'
 import Popup from '../components/Popup'
 import { API_CODE } from '@/constants'
+import { ProFormDatePicker, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components'
 
 
 const RecordExam = () => {
@@ -213,6 +214,19 @@ const RecordExam = () => {
 
   return (
     <div className={style.record}>
+      {/* 筛选 */}
+      <QueryFilter defaultCollapsed split>
+        <ProFormText name="name" label="考试名称" />
+        <ProFormSelect name="classify" label="科目分类" />
+        <ProFormText name="creator" label="创建者" />
+        <ProFormDatePicker name="createTime" label="创建时间" />
+        <ProFormSelect name="status" label="应用状态" />
+        <ProFormText name="examiner" label="监考人" />
+        <ProFormSelect name="group" label="考试班级" />
+        <ProFormDatePicker name="time" label="考试时间" />
+      </QueryFilter>
+
+      {/* 考试记录 */}
       <Table<ExaminationItem>
         className={style.table}
         columns={columns}
