@@ -263,7 +263,7 @@ export type TestDetailQues = {
   score: number
   classify: string | { _id: string, name: string }
   answer: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   desc: string
   __v: number
 }
