@@ -160,7 +160,7 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   question: string
   type: 'single' | 'multiple' | 'judge'
   __v: number
