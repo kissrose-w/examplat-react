@@ -19,7 +19,8 @@ import type {
   ClassifyList,
   TestPaperDetail,
   createTestParams,
-  TestCreate
+  TestCreate,
+  CreateExamination
 } from '@/services/type'
 import request from './request'
 
