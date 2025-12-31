@@ -113,12 +113,13 @@ export type UserCreateParams = {
   email?: string,
   sex?: 0 | 1,
   age?: number,
-  role?: []
+  role?: string[]
 }
 
 export type UserEditParams = UserCreateParams & {
   id : string
   status?: 0 | 1 
+  name?: string
 }
 // 编辑用户
 export const userEditApi = (params: UserEditParams) => {
