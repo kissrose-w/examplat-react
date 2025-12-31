@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getPermissionApi, permissionRemoveApi, permissionEditApi } from '@/services'
 import type { PermissionType } from '@/services'
 import { API_CODE } from '@/constants'
@@ -58,7 +58,10 @@ const MenuManage = () => {
       key: 'isBtn',
       render: (_, record) => {
         if(edit && record._id === curId){
-          return <Input type="text" value={curIsBtn.toString()} onChange={(e) => setCurIsBtn(e.target.value)} suffix={<CloseCircleOutlined onClick={() => setCurIsBtn(false)}/>}/>
+          return <Input type="text" value={curIsBtn ? '按钮' : '页面'} onChange={(e) => {
+            const inputVal = e.target.value
+            setCurIsBtn(inputVal === '按钮' || inputVal === 'true')
+          }} suffix={<CloseCircleOutlined onClick={() => setCurIsBtn(false)}/>}/>
         } else {
           return record.isBtn === false ? '页面' : '按钮'
         }
@@ -105,8 +108,9 @@ const MenuManage = () => {
     setLoading(true)
     try {
       const res = await getPermissionApi()
-      // console.log(res.data)a
+      console.log(res.data)
       setMenuList(res.data.data.list)
+      
     } catch (error) {
       console.log(error)  
     } finally{
@@ -180,6 +184,7 @@ const MenuManage = () => {
         }}
         dataSource={menuList}
         rowKey={row => row._id}
+        loading={loading}
       />
       <MenuDrawer
         open={open}
