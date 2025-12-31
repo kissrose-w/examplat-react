@@ -34,7 +34,7 @@ const Search: React.FC<Props> = ({setIsModalOpen, setMode, getSearchP}) => {
     }
   }
 
-  const onFinish = (values: unknown) => {
+  const onFinish = (values: { username: string, status: string }) => {
     // console.log(values) 
     getSearchP(values)
   }

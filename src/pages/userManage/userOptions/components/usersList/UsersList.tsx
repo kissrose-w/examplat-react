@@ -4,6 +4,7 @@ import type { TableProps} from 'antd'
 import type { UsersListResponse, UsersListParams, UserEditParams } from '@/services'
 // import type { UserInfo } from '@/services/type'
 type Props = {
+  loading: boolean
   usersInfo: UsersListResponse[]
   params: UsersListParams
   onSetParams: (params: UsersListParams) => void
@@ -14,11 +15,12 @@ type Props = {
   setMode: (p: string) => void
 }
 
-const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel, onSetOriginInfo,setIsModalOpen, setMode}) => {
+const UsersList:React.FC<Props> = ({loading, usersInfo, params, onSetParams, total, onDel, onSetOriginInfo,setIsModalOpen, setMode}) => {
 
   
   const changeSwitch = (checked: boolean, record: UsersListResponse) => {
     console.log(`switch to ${checked}`)
+    console.log(`switch to ${record}`)
   }
   
   const columns: TableProps<UsersListResponse>['columns'] = [
@@ -79,7 +81,7 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
       title: '最近登录时间',
       dataIndex: 'lastOnlineTime',
       key: 'lastOnlineTime',
-      render: (_, record) => new Date( record.lastOnlineTime).toLocaleString(),
+      render: (_, record) => new Date( record.lastOnlineTime as string).toLocaleString(),
       width: 200,
       align: 'center'
     },
@@ -129,6 +131,7 @@ const UsersList:React.FC<Props> = ({usersInfo, params, onSetParams, total, onDel
         scroll={{ x: 1200 }}
         dataSource={usersInfo}
         rowKey="_id"
+        loading={loading}
         pagination={
           {
             showSizeChanger: true,
