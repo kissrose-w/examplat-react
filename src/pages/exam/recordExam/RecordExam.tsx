@@ -3,11 +3,10 @@ import { getExaminationListApi, getSubjectApi, removeExamRecordApi } from '@/ser
 import React, { useEffect, useMemo, useState } from 'react'
 import style from './record.module.scss'
 import { Button, Flex, message, Table, Tag, type TableColumnsType } from 'antd'
-import type { ExaminationItem, SearchSubjectList } from '@/services/type'
+import type { ExaminationItem, QueryParams, SearchSubjectList } from '@/services/type'
 import Popup from '../components/Popup'
 import { API_CODE } from '@/constants'
-import { ProFormDatePicker, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components'
-
+import Filter from './components/filter/Filter'
 
 const RecordExam = () => {
 
@@ -118,17 +117,14 @@ const RecordExam = () => {
       title: '创建时间',
       width: 200,
       className: style.column,
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'createAt',
+      key: 'createAt',
       align: 'center',
       render: (_, record) => {
-        return _ ?
-          new Date(_).toLocaleString()
+        return record.createdAt ?
+          new Date(record.createdAt).toLocaleString()
           :
-          record.createdAt ?
-            new Date(record.createdAt).toLocaleString()
-            :
-            '— —'
+          '— —'
       }
     },
     {
@@ -186,6 +182,7 @@ const RecordExam = () => {
     }
   }
 
+  // 获取科目列表
   const getSubjectList = async () => {
     try {
       const res = await getSubjectApi()
@@ -212,6 +209,7 @@ const RecordExam = () => {
       console.log(res)
       if(res.data.code === API_CODE.SUCCESS) {
         message.success('删除成功')
+        // 更新列表
         getExaminationList()
       } else {
         message.error(res.data.msg)
@@ -231,19 +229,19 @@ const RecordExam = () => {
     })
   }, [recordList])
 
+  const filterData = async (params: QueryParams) => {
+    try {
+      const res = await getExaminationListApi(params)
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <div className={style.record}>
       {/* 筛选 */}
-      <QueryFilter defaultCollapsed split>
-        <ProFormText name="name" label="考试名称" />
-        <ProFormSelect name="classify" label="科目分类" />
-        <ProFormText name="creator" label="创建者" />
-        <ProFormDatePicker name="createTime" label="创建时间" />
-        <ProFormSelect name="status" label="应用状态" />
-        <ProFormText name="examiner" label="监考人" />
-        <ProFormSelect name="group" label="考试班级" />
-        <ProFormDatePicker name="time" label="考试时间" />
-      </QueryFilter>
+      <Filter onSearch={filterData} />
 
       {/* 考试记录 */}
       <Table<ExaminationItem>
