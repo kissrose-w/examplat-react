@@ -72,11 +72,6 @@ const Preview: React.FC<PreviewProps> = ({
           break
         }
       })
-
-      
-      
-      
-      
     }
   }, [list])
 
