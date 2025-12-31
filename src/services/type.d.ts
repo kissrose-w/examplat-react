@@ -96,7 +96,15 @@ export type TestParams = {
 // 查询参数
 export type QueryParams = {
   page: number,
-  pagesize: number
+  pagesize: number,
+  classify?: string,
+  createAt?: string,
+  creator?: string,
+  startTime?: string,
+  endTime?: number
+  examiner?: string
+  group?: string
+  name?: string
 }
 
 //页数
@@ -115,7 +123,6 @@ export type ExaminationList = {
 // 考试记录列表项
 export type ExaminationItem = {
   classify: string
-  createTime: number
   createdAt: string
   creator: string
   endTime: number
