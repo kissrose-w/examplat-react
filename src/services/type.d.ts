@@ -36,7 +36,7 @@ export type UserInfo = {
   _id: string
   username: string
   sex: 0 | 1
-  avator: string
+  avatar: string
   email: string
   age: number
   role: string[]
