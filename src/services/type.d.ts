@@ -22,6 +22,7 @@ export type LoginParams = Record<'username' | 'password' | 'code' | 'sessionId',
 // 登录响应
 export type LoginResponse = {
   token: string
+  sessionId: string
 }
 
 // 权限
@@ -34,7 +35,7 @@ export type PermissionItem = {
 export type UserInfo = {
   _id: string
   username: string
-  sex: string
+  sex: 0 | 1
   avator: string
   email: string
   age: number
@@ -58,39 +59,6 @@ export type MenuListItem = {
   updatedAt: string
   _id: string
   children?: MenuListItem[]
-}
-
-// 试卷列表
-interface Ques {
-  order: number
-  question: string
-  score: number
-  _id: string
-}
-export type TestListItem = {
-  classify: string
-  createdAt: string
-  createTime: string
-  creator: string
-  description: string
-  duration: number
-  name: string
-  questions: Ques[]
-  status: number
-  totalScore: number
-  updatedAt: string
-  __V: number
-  _id: string
-}
-export type TestList = {
-  list: TestListItem[]
-  total: number
-  totalPage: number
-}
-// 试卷参数
-export type TestParams = {
-  page: number
-  pagesize: number
 }
 
 // 查询参数
@@ -140,7 +108,7 @@ export type ExaminationItem = {
 export type QuestionItem = {
   answer: string,
   classify: string,
-  options: string[],
+  options: { label: string, value: string }[],
   question: string,
   type: string,
   __v: number,
@@ -192,9 +160,9 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: string[]
+  options: { label: string, value: string }[]
   question: string
-  type: 0 | 1 | 2 | 3
+  type: 'single' | 'multiple' | 'judge'
   __v: number
   _id: string
 }
@@ -213,7 +181,6 @@ export type QuestionTypeItem = Pick<SearchSubjectList, 'name' | '_id' | 'value'>
 export type QuestionTypeValue = {
   list:QuestionTypeItem[]
 }
-
 
 // 查询班级响应
 export type GroupResponse = {
@@ -250,14 +217,53 @@ export type ClassifyList = {
   totalPage: number
 }
 
+// 试卷列表
+interface Ques {
+  order: number
+  question: string
+  score: number
+  _id: string
+}
+export type TestListItem = {
+  _id: string
+  name: string
+  classify: string
+  totalScore: number
+  duration: number
+  difficulty: number
+  creator: string
+  status: number
+  createdAt: string
+  // questions: Ques[]
+  // createTime: string
+  // __V: number
+  // description: string
+  // totalScore: number
+  // updatedAt: string
+}
+export type TestList = {
+  list: TestListItem[]
+  total: number
+  totalPage: number
+}
+// 试卷参数
+export type TestParams = {
+  page: number
+  pagesize: number
+  name?: string
+  classify?: string
+  creator?: string
+}
+
 // 试卷详情questions
 export type TestDetailQues = {
   _id: string
   question: string
   type: string
-  classify: string
+  score: number
+  classify: string | { _id: string, name: string }
   answer: string
-  options: string[]
+  options: { label: string, value: string }[]
   desc: string
   __v: number
 }
@@ -266,8 +272,45 @@ export type TestPaperDetail = {
   _id: string
   name: string
   classify: string
+  totalScore: number
+  duration: number
+  difficulty: number
   questions: TestDetailQues[]
+  creator: string
+  status: number
+  createdAt: string
+  updatedAt: string
+}
+
+// 创建试卷参数
+export type createTestParams = {
+  name: string
+  classify: string
+  questions: string[]
+  duration?: string
+  difficulty?: string
+}
+// 创建试卷返回
+export type TestCreate = {
+  _id: string
+  name: string
+  classify: string
+  totalScore: number
+  duration: number
+  difficulty: number
+  questions: string[]
+  creator: string
+  status: number
+  createdAt: string
+  updatedAt: string
 }
 
 //试题创建参数
-export type CreatQuestion = Omit<TestDetailQues, '_id' | '__v'>
+export type CreatQuestion = {
+  question: string
+  type: string
+  classify: string | { _id: string, name: string }
+  answer: string
+  options: { label: string, value: string }[]
+  explanation: string
+}

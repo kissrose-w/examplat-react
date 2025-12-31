@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Button, Modal, Form, Input, Select, Space } from 'antd'
+import { Button, Modal, Form, Input, Space } from 'antd'
 import type { RoleCreateP } from '@/services'
 
 interface Props {
@@ -54,9 +54,9 @@ const RoleModal:React.FC<Props> = ({isModalOpen, setIsModalOpen, onCreate}) => {
           <Form.Item name="name" label="角色" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="value" label="value" rules={[{ required: true }]}>
+          {/* <Form.Item name="creator" label="创建者" rules={[{ required: true }]}>
             <Input />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item name="createAt" label="创建时间" rules={[{ required: true }]}>
             <Input />
           </Form.Item>

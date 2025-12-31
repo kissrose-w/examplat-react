@@ -18,7 +18,8 @@ import type {
   GroupResponse,
   ClassifyList,
   TestPaperDetail,
-  CreateExamination
+  createTestParams,
+  TestCreate
 } from '@/services/type'
 import request from './request'
 
@@ -91,13 +92,14 @@ export type UsersListResponse = {
   '_id': string
   'username': string
   'password': string
-  'status': number
-  '__v': number
+  'status': 0 | 1
+  '__v': number,
+  'lastOnlineTime'?: string
 }
 // 获取用户列表
 export const usersListApi = (params?: UsersListParams) => {
-  return request.get<Base<UserInfo[]>>('/user/list', {
-    params: params || ''
+  return request.get<Base<UsersListResponse[]>>('/user/list', {
+    params: params || {}
   })}
 
 // 删除用户
@@ -105,19 +107,32 @@ export const userSDelApi = (id: string) => {
   return request.post<Omit<Base,'data'>>('/user/remove', {id})
 }
 
+export type UserCreateParams = {
+  username?: string,
+  password?: string,
+  email?: string,
+  sex?: 0 | 1,
+  age?: number,
+  role?: []
+}
+
+export type UserEditParams = UserCreateParams & {
+  id : string
+  status?: 0 | 1 
+}
 // 编辑用户
-export const userEditApi = (params: UserInfo) => {
+export const userEditApi = (params: UserEditParams) => {
   return request.post<Omit<Base,'data'>>('/user/update', params)
 }
 
 // 创建用户
-export const userCreateApi = (params: UserInfo) => {
+export const userCreateApi = (params: UserCreateParams) => {
   return request.post<Omit<Base,'data'>>('/user/create', params)
 }
 
 // 查询角色接口
 export const userRoleApi = () => {
-  return request.get<Base<PermissionType>>('/role/list')
+  return request.get<Base<PermissionType[]>>('/role/list')
 }
 
 // 编辑角色接口
@@ -135,7 +150,7 @@ export const roleRemoveApi = (id: string) => {
 export type RoleCreateP = {
   _id?: string
   name: string
-  value: string
+  creator?: string
   createdAt?: string
   description: string
 }
@@ -243,8 +258,8 @@ export const getQuestionTypeApi = () =>{
 }
 
 //编辑题目接口
-export const getQuestionEditApi = (_id: string, question: string) =>{
-  return request.post<SubjectCreat>('/question/update',{_id,question})
+export const getQuestionEditApi = (id: string, question: string) =>{
+  return request.post<SubjectCreat>('/question/update',{id,question})
 }
 // 查询试卷列表
 export const getTestPaperList = (params?: TestParams) => {
@@ -259,8 +274,8 @@ export const delTestPaper = (id: string) => {
 }
 
 // 获取试卷科目
-export const getClassifyList = (params: TestParams) => {
-  return request.get<BaseResponse<ClassifyList>>('/classify/list', { params })
+export const getClassifyList = () => {
+  return request.get<BaseResponse<ClassifyList>>('/classify/list')
 }
 
 // 试卷详情
@@ -270,13 +285,17 @@ export const getTestPaperDetail = (id: string) => {
   })
 }
 
+// 创建试卷
+export const createTestPaper = (params: createTestParams) => {
+  return request.post<BaseResponse<TestCreate>>('/exam/create', params)
+}
 //创建试题
 export const getCreatQuestionApi = (params: {
   question: string
   answer: string | string[]
   type: string | number
   classify: string | number
-  options: string[]
+  options: { label: string, value: string }[]
   explanation: string
 }) => {
   return request.post<BaseResponse>('/question/create', params)

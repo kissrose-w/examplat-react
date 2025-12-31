@@ -26,12 +26,12 @@ const System = () => {
   const getRoleList = useCallback(async() =>{
     try {
       const res = await userRoleApi()
-      // console.log(res.data)
+      console.log(res.data)
       setRoleList(res.data.data.list)
       const options = res.data.data.list.map((item) => {
         return {
           label: item.name,
-          value: item.value
+          creator: item.creator
         }
       })
       // console.log(options)
@@ -42,11 +42,11 @@ const System = () => {
 
   // 分配角色按钮
   const assignRole = (record: DataType) => {
-    
+    const permissionIds = record.permission?.map(item => item._id) || []
     setEditP({
       _id: record._id!,
       name: record.name!,
-      permission: record.permission || []
+      permission: permissionIds
     })
 
     onGetPermission()
@@ -59,7 +59,7 @@ interface DataType {
   value: string
   createdAt: string,
   description: string
-  permission?: string
+  permission?:  Array<{ _id: string; name: string }>
 }
 
 const columns: TableProps<DataType>['columns'] = [
@@ -74,14 +74,17 @@ const columns: TableProps<DataType>['columns'] = [
     key: 'name',
   },
   {
-    title: 'value',
-    dataIndex: 'value',
-    key: 'value',
+    title: '创建者',
+    dataIndex: 'creator',
+    key: 'creator',
   },
   {
     title: '创建时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    render: (_, record) =>{
+      return new Date( record.createdAt).toLocaleString()
+    }
   },
   {
     title: '拥有权限',
@@ -178,7 +181,7 @@ return (
       editP={editP}
       onSuccess={() => {
         getRoleList()  
-        onGetPermission() 
+        onGetPermission()
       }} 
     />
   </div>

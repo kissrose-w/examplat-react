@@ -13,7 +13,7 @@ interface OptionRendererProps {
   selectedAnswer: number | number[]
   options: OptionsType
   blankAnswer: string
-  handleOptionChange: (optionKey: keyof OptionsType, value: string) => void
+  handleOptionChange: (optionKey: number, value: string) => void
   handleRadioAnswerChange: (e: RadioChangeEvent) => void
   handleCheckboxAnswerChange: (checkedValues: number[]) => void
   handleBlankAnswerChange: (e: React.ChangeEvent<HTMLInputElement>) => void

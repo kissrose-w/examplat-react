@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Flex, Form, Input, message, Row, Select, Space } from 'antd'
 import { getQuestionTypeApi, getSubjectApi, getCreatQuestionApi } from '@/services'
-import type { QuestionTypeItem, SearchSubjectList, CreatQuestion } from '@/services/type'
+import type { QuestionTypeItem, SearchSubjectList } from '@/services/type'
 import { useNavigate } from 'react-router-dom'
 import style from '../CreateItem.module.scss'
 import type { RadioChangeEvent } from 'antd/es'
@@ -180,29 +180,45 @@ const Operation = () => {
       if (curSelect === 'fill') {
         // 填空题：直接使用输入的答案内容
         answerContent = blankAnswer
+      } else if (curSelect === 'judge') {
+        // 判断题：使用"true"或"false"
+        answerContent = judgeAnswer === 1 ? 'true' : 'false'
       } else if (Array.isArray(selectedAnswer)) {
-        // 多选题：获取所有选中选项的内容
-        answerContent = selectedAnswer.map(answer => options[answer] || '')
+        // 多选题：返回选项标签（如"A,B,C"）
+        const answerLabels = selectedAnswer.map(answer => String.fromCharCode(64 + answer))
+        answerContent = answerLabels.join(',')
       } else {
-        // 单选题/判断题：获取单个选中选项的内容
-        const answerValue = curSelect === 'judge' ? judgeAnswer : (selectedAnswer as number)
-        answerContent = options[answerValue] || ''
+        // 单选题：返回选项标签（如"A"）
+        const answerValue = selectedAnswer as number
+        const answerLabel = String.fromCharCode(64 + answerValue)
+        answerContent = answerLabel
       }
+      // 找到创建的科目类型
+      const classifyInfo = classifyData.find(item => item._id === values.classify)
+      console.log('创建的科目类型：', classifyInfo)
       
-      // 构造最终提交的数据
-      const submitData: {
-        question: string
-        answer: string | string[]
-        type: string | number
-        classify: string | number
-        options: string[]
-        explanation: string
-      } = {
+      // 构造最终提交的数据，选项格式化为对象数组
+      let formattedOptions: { label: string, value: string }[] = []
+      
+      if (curSelect === 'judge' || curSelect === 'fill') {
+        // 判断题和填空题：传递空数组
+        formattedOptions = []
+      } else {
+        // 单选题和多选题：格式化用户输入的选项
+        formattedOptions = Object.entries(options)
+          .filter(([_, value]) => value && value.trim() !== '')
+          .map(([key, value]) => ({
+            label: String.fromCharCode(64 + Number(key)), // A, B, C, D
+            value: value.trim()
+          }))
+      }
+
+      const submitData = {
         question: values.question,
         answer: answerContent,
         type: values.type,
         classify: values.classify,
-        options: Object.values(options),
+        options: formattedOptions,
         explanation: values.explanation || '',
       }
 
@@ -212,6 +228,7 @@ const Operation = () => {
       console.log('选中的答案索引：', curSelect === 'judge' ? judgeAnswer : selectedAnswer)
       console.log('判断题答案变量1：', judgeAnswer)
       console.log('填空题答案：', blankAnswer)
+      console.log('当前题型：', curSelect)
       console.log('最终提交数据：', submitData)
 
       // 调用创建接口
@@ -224,7 +241,7 @@ const Operation = () => {
             setSelectedAnswer(1)
             setBlankAnswer('')
           } else {
-            message.error(res.data.msg || '创建失败')
+            message.error('创建失败')
           }
         })
         .catch(err => {
@@ -282,11 +299,9 @@ const Operation = () => {
         handleCheckboxAnswerChange={handleCheckboxAnswerChange}
         handleBlankAnswerChange={handleBlankAnswerChange}
       />
-      <Col span={8}>
-        <Form.Item label='解析' rules={[{required: true, message: '请输入解析内容'}]}>
-          <Input.TextArea rows={3} placeholder='请输入解析'/>
-        </Form.Item>
-      </Col>
+      <Form.Item name="explanation" label='解析' rules={[{required: true, message: '请输入解析内容'}]}>
+        <Input.TextArea rows={3} placeholder='请输入解析'/>
+      </Form.Item>
       <Form.Item>
         <Flex justify='end'>
           <Space>
