@@ -252,7 +252,7 @@ export type TestDetailQues = {
     value: string,
     _id: string
   }[]
-  score: number
+  score?: number
 }
 // 试卷详情
 export type TestPaperDetail = {

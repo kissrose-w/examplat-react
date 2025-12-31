@@ -1,6 +1,6 @@
 import { API_CODE } from '@/constants'
-import { createTestPaper, getClassifyList, getQuestionsListApi } from '@/services'
-import type { ClassifyItem, QuestionData } from '@/services/type'
+import { createTestPaper, getQuestionsListApi } from '@/services'
+import type { QuestionData } from '@/services/type'
 import {
   ProCard,
   ProFormDatePicker,
@@ -13,14 +13,19 @@ import {
 import { Button, message, Segmented, Modal, Input } from 'antd'
 import { useEffect, useState } from 'react'
 import Choice from './choice/Choice'
+import { createListInfo } from '@/store/CreatePaper'
+import BaseInfo from './baseInfo/baseInfo'
 
 const CreatePaper = () => {
   const [loading,setLoading] = useState(false)
-  const [list, setList] = useState<ClassifyItem[]>([])
   const [questions, setQuestions] = useState<QuestionData[]>([])
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([])
-  // 随机组卷数量
-  const [randomQuestionCount, setRandomQuestionCount] = useState<number>(0)
+  const [randomQuestionCount, setRandomQuestionCount] = useState<number>(0) // 随机组卷数量
+  const [showQues, setShowQues] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectValue, setSelectValue] = useState('')
+  const [name, setName] = useState('')
+  const { testList: list, getList} = createListInfo() // 创建类型
   const waitTime = (time: number = 100) => {
     return new Promise((resolve) => {
       setLoading(true)
@@ -30,28 +35,10 @@ const CreatePaper = () => {
       }, time)
     })
   }
-  const [showQues, setShowQues] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectValue, setSelectValue] = useState('')
-  const [name, setName] = useState('')
-
-  // 创建类型
+  
   useEffect(() => {
-    const getList = async () => {
-      try {
-        const res = await getClassifyList()
-        console.log(res)
-        if (res.data.code === API_CODE.SUCCESS) {
-          setList(res.data.data.list)
-        } else {
-          message.error(res.data.msg)
-        }
-      } catch(e) {
-        console.log(e)
-      }
-    }
     getList()
-  }, [])
+  }, [getList])
 
   // 选择科目
   const onChange = async (value: string) => {
@@ -193,7 +180,15 @@ const CreatePaper = () => {
                 <Button
                   type="primary"
                   key="goToTree"
-                  onClick={() => props.onSubmit?.()}
+                  onClick={() => {
+                    // 校验有没有选择试题
+                    if (selectedQuestions.length === 0) {
+                      message.error('请至少选择一道题目')
+                      return
+                    }
+                    // 校验通过，进入第三步
+                    props.onSubmit?.()
+                  }}
                 >
                   去第三步 {'>'}
                 </Button>,
@@ -349,6 +344,13 @@ const CreatePaper = () => {
           }
         </StepsForm.StepForm>
         <StepsForm.StepForm name="time" title="展示试卷基本信息">
+          {/* 展示试卷基本信息 */}
+          <BaseInfo 
+            name={name} 
+            subjectName={list.find(item => item._id === selectValue)?.name || ''} 
+            questions={questions.filter(q => selectedQuestions.includes(q._id))} 
+            showQues={showQues}
+          />
         </StepsForm.StepForm>
       </StepsForm>
     </ProCard>
