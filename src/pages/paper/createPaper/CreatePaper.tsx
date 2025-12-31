@@ -12,7 +12,6 @@ import {
 } from '@ant-design/pro-components'
 import { Button, message, Segmented, Modal, Input } from 'antd'
 import { useEffect, useState } from 'react'
-import style from './CreatePaper.module.scss'
 import Choice from './choice/Choice'
 
 const CreatePaper = () => {
