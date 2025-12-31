@@ -12,7 +12,6 @@ import {
 } from '@ant-design/pro-components'
 import { Button, message, Segmented, Modal, Input } from 'antd'
 import { useEffect, useState } from 'react'
-import style from './CreatePaper.module.scss'
 import Choice from './choice/Choice'
 
 const CreatePaper = () => {
@@ -267,7 +266,7 @@ const CreatePaper = () => {
           />
           <Segmented<string | number>
             options={['选题组卷', '随机组卷']} 
-            style={{marginBottom: 30}} 
+            style={{marginBottom: 20}} 
             block 
             onChange={() => setShowQues(!showQues)}
           />
@@ -309,7 +308,7 @@ const CreatePaper = () => {
               </Modal>
             </div> : 
             <div>
-              <div style={{ marginBottom: 10 }}>
+              <div style={{ marginBottom: 20 }}>
                 试题数量：
                 <span style={{ color: '#1890ff', marginLeft: 8 }}>
                   当前科目下共有 {questions.length} 道试题，最多可选择 {questions.length} 道
