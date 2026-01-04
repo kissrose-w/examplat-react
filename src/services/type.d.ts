@@ -328,3 +328,29 @@ export type CreatQuestion = {
   options: { label: string, value: string }[]
   explanation: string
 }
+
+//学生信息list
+export type StudentItem ={
+  _id: string,
+  username: string,
+  email: string,
+  classId: {
+    _id: string,
+    name: string
+  },
+  sex: 0 | 1,
+  age: number,
+  status: number,
+  createdAt: string,
+  updatedAt: string
+}
+
+//查询学生
+export type StudentList = {
+  total: number,
+  page: number,
+  pagesize: number,
+  totalPage: number,
+  currentPage: number,
+  list: StudentItem[]
+} 
