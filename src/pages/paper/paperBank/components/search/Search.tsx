@@ -1,7 +1,7 @@
 import { columns } from '@/pages/paper/paperBank/columns'
 import { Form, Table, Button, Input, Select, Row, Col } from 'antd'
 import type { FormValues } from '../../PaperBank'
-import type { TestListItem } from '@/services/type'
+import type { ClassifyItem, TestListItem } from '@/services/type'
 
 // 定义分页参数类型
 interface PaginationParams {
@@ -28,6 +28,7 @@ interface Props {
   onDelPaper: (id: string) => Promise<void>
   setPreviewList: (value: TestListItem) => void
   pagination: PaginationParams // 添加pagination类型定义
+  classifyList: ClassifyItem[] // 添加科目列表参数
 }
 
 const Search: React.FC<Props> = ({
@@ -39,7 +40,8 @@ const Search: React.FC<Props> = ({
   onLoading,
   onDelPaper,
   setPreviewList,
-  pagination
+  pagination,
+  classifyList
 }) => {
   const [form] = Form.useForm<FormValues>() // 获取form实例
   return (
@@ -79,10 +81,15 @@ const Search: React.FC<Props> = ({
             <Select
               placeholder='请选择'
               allowClear
-              options={subjects.map(item => ({
-                value: item,
-                label: item
-              }))}
+              options={ subjects.map(item => {
+                // 查找匹配的科目
+                const classify = classifyList.find(v => item === v._id)
+                // 返回正确的value和label，value为ID，label为名称
+                return {
+                  value: item,
+                  label: classify ? classify.name : item
+                }
+              })}
             />
           </Form.Item>
         </Col>
@@ -110,7 +117,7 @@ const Search: React.FC<Props> = ({
       </Row>
       <Table<TestListItem>
         dataSource={currentPageData}
-        columns={columns({ onDelPaper, onLoading, setPreviewList })}
+        columns={columns({ onDelPaper, onLoading, setPreviewList, classifyList })}
         size='middle'
         pagination={pagination}
         loading={loading}

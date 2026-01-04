@@ -1,0 +1,65 @@
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.subType {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #666;
+}
+.des {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.des p {
+  margin: 0;
+  color: #333;
+  font-size: 14px;
+}
+.num {
+  font-weight: normal;
+  color: #1890ff;
+}
+.conTit {
+  font-weight: bolder;
+  margin: 0 0 8px 0;
+}
+.judge {
+  display: flex;
+  margin: 8px 0;
+}
+.choiceType {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #1890ff;
+  border-bottom: 2px solid #1890ff;
+  padding-bottom: 8px;
+}
+.blankTip {
+  font-style: italic;
+  color: #8c8c8c;
+  margin: 8px 0;
+}
+.questionSection {
+  margin: 24px 0;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1890ff;
+  border-bottom: 2px solid #1890ff;
+  padding-bottom: 8px;
+}
