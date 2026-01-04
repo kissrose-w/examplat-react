@@ -69,6 +69,7 @@ const UserModal: React.FC<Props> = ({isModalOpen, setIsModalOpen}) => {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={false}
+        loading={loading}
       >
         <Form
           {...layout}

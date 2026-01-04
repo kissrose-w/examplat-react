@@ -5,13 +5,13 @@
   z-index: 20;
   top: 0;
   left: 0;
-  padding: 30px 150px;
+  padding: 50px 150px;
   overflow: hidden;
   
   .proCard{
     height: 100%;
     width: 100%;
-    background: rgba($color: #fff, $alpha: .9);
+    background: rgba($color: #fff, $alpha: .95);
     overflow: auto;
     // scrollbar-width: thin;
     &::-webkit-scrollbar{

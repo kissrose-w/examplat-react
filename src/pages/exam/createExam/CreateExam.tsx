@@ -14,9 +14,10 @@ import {
   usersListApi,
   getGroupListApi,
   getTestPaperList,
-  createExamApi
+  createExamApi,
+  type UsersListResponse
 } from '@/services'
-import type { CreateExamination, GroupItem, SearchSubjectList, TestListItem, UserInfo } from '@/services/type'
+import type { CreateExamination, GroupItem, SearchSubjectList, TestListItem } from '@/services/type'
 import Public from './components/public/Public'
 import Config from './components/config/Config'
 import BaseInfo from './components/baseInfo/BaseInfo'
@@ -29,7 +30,7 @@ const CreateExam = () => {
 
   const formRef = useRef<ProFormInstance>(null)
   const [subList, setSubList] = useState<SearchSubjectList[]>()
-  const [userList, setUserList] = useState<UserInfo[]>()
+  const [userList, setUserList] = useState<UsersListResponse[]>()
   const [groupList, setGroupList] = useState<GroupItem[]>()
   const [paperList, setPaperList] = useState<TestListItem[]>()
   const [crParams, setCrParams] = useState<CreateExamination>({

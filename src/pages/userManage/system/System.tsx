@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { userRoleApi, roleRemoveApi, roleCreateApi, getPermissionApi } from '@/services'
 import type { RoleCreateP, PermissionType } from '@/services'
 import { Space, Table, Button, message } from 'antd'
@@ -28,12 +28,12 @@ const System = () => {
       const res = await userRoleApi()
       console.log(res.data)
       setRoleList(res.data.data.list)
-      const options = res.data.data.list.map((item) => {
-        return {
-          label: item.name,
-          creator: item.creator
-        }
-      })
+      // const options = res.data.data.list.map((item) => {
+      //   return {
+      //     label: item.name,
+      //     creator: item.creator
+      //   }
+      // })
       // console.log(options)
     } catch (error) {
       console.log(error)
@@ -178,7 +178,7 @@ return (
       setOpen={setOpen}
       permissionList={permissionList}
       itemPer={editP?.permission}
-      editP={editP}
+      editP={editP!}
       onSuccess={() => {
         getRoleList()  
         onGetPermission()

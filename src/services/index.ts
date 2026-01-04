@@ -20,7 +20,9 @@ import type {
   TestPaperDetail,
   createTestParams,
   TestCreate,
-  CreateExamination
+  CreateExamination,
+  UEParams,
+  StudentList
 } from '@/services/type'
 import request from './request'
 
@@ -59,6 +61,11 @@ export const getGroupListApi = (params?: QueryParams) => {
 // 获取试卷列表
 export const getExaminationListApi = (params: QueryParams) => {
   return request.get<BaseResponse<ExaminationList>>('/examination/list', {params})
+}
+
+// 编辑考试信息
+export const updateExaminationApi = (params: UEParams) => {
+  return request.post('/examination/update', params)
 }
 
 // 删除考试记录
@@ -121,6 +128,7 @@ export type UserEditParams = UserCreateParams & {
   id : string
   status?: 0 | 1 
   name?: string
+  avatar?: string
 }
 // 编辑用户
 export const userEditApi = (params: UserEditParams) => {
@@ -130,6 +138,23 @@ export const userEditApi = (params: UserEditParams) => {
 // 创建用户
 export const userCreateApi = (params: UserCreateParams) => {
   return request.post<Omit<Base,'data'>>('/user/create', params)
+}
+export type PhotoResponse = {
+  code: number
+  msg: string
+  data : {
+    url: string
+    filename: string
+    size: string
+  }
+}
+// 上传图片
+export const photoApi = (formData: FormData) => {
+  return request.post<PhotoResponse>('upload/image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 // 查询角色接口
@@ -301,4 +326,9 @@ export const getCreatQuestionApi = (params: {
   explanation: string
 }) => {
   return request.post<BaseResponse>('/question/create', params)
+}
+
+//获取学生信息
+export const getStudentsApi = (params: Pages) =>{
+  return request.get<BaseResponse<StudentList>>('/student/list', {params})
 }

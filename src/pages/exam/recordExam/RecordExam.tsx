@@ -1,32 +1,37 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { getExaminationListApi, getSubjectApi, removeExamRecordApi } from '@/services'
+import { getExaminationListApi, getSubjectApi, getTestPaperList, removeExamRecordApi, usersListApi, type UsersListResponse } from '@/services'
 import React, { useEffect, useMemo, useState } from 'react'
 import style from './record.module.scss'
-import { Button, Flex, message, Table, Tag, type TableColumnsType } from 'antd'
-import type { ExaminationItem, QueryParams, SearchSubjectList } from '@/services/type'
-import Popup from '../components/Popup'
+import { Button, Flex, Form, message, Table, Tag, type TableColumnsType } from 'antd'
+import type { ExaminationItem, QueryParams, SearchSubjectList, TestListItem } from '@/services/type'
+import Popup from './components/popup/Popup'
 import { API_CODE } from '@/constants'
 import Filter from './components/filter/Filter'
+import type { BaseItem } from '@/services/type'
+import Edit from './components/edit/Edit'
 
 const RecordExam = () => {
 
-  // const {styles} = useStyle()
 
+  const [form] = Form.useForm()
   const [recordList, setRecordList] = useState<ExaminationItem[]>()
   const [total, setTotal] = useState<number>()
   const [loading, setLoading] = useState(false)
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<QueryParams>({
     page: 1,
     pagesize: 5
   })
   const [isShow, setIsShow] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
   const [curExam, setCurExam] = useState<ExaminationItem>()
   const [subList, setSubList] = useState<SearchSubjectList[]>()
+  const [paperList, setPaperList] = useState<TestListItem[]>()
+  const [userList, setUserList] = useState<UsersListResponse[]>()
 
   // 每一列的设置
   const columns: TableColumnsType<ExaminationItem> = [
     {
-      title: '试卷名',
+      title: '考试名称',
       width: 130,
       className: style.column,
       dataIndex: 'name',
@@ -36,18 +41,29 @@ const RecordExam = () => {
     },
     {
       title: '科目',
-      width: 180,
+      width: 120,
       className: style.column,
       dataIndex: 'classify',
       key: 'classify',
       align: 'center',
       render: (_) => {
-        return subList?.find(v => v._id === _)?.name
+        return _.name
+      }
+    },
+    {
+      title: '试卷名',
+      width: 140,
+      className: style.column,
+      dataIndex: 'examId',
+      key: 'examId',
+      align: 'center',
+      render: (_) => {
+        return _.name
       }
     },
     {
       title: '开始时间',
-      width: 200,
+      width: 150,
       className: style.column,
       dataIndex: 'startTime',
       key: 'startTime',
@@ -58,7 +74,7 @@ const RecordExam = () => {
     },
     {
       title: '结束时间',
-      width: 200,
+      width: 150,
       className: style.column,
       dataIndex: 'endTime',
       key: 'endTime',
@@ -101,8 +117,8 @@ const RecordExam = () => {
       dataIndex: 'group',
       key: 'group',
       align: 'center',
-      render: (_) => {
-        return _.length === 0 || _[0] === null ? '— —' : _.join('、')
+      render: (_: BaseItem[]) => {
+        return _.length === 0 || _[0] === null ? '— —' : _.map(v => v.name).join('、')
       }
     },
     {
@@ -146,6 +162,11 @@ const RecordExam = () => {
             variant="text"
             onClick={() => {
               console.log(record)
+              form.setFieldsValue({
+                ...record,
+                classify: record.classify?._id ?? record.classify,
+              })
+              setIsEdit(true)
             }}
           >编辑</Button>
           <Button
@@ -183,24 +204,70 @@ const RecordExam = () => {
   }
 
   // 获取科目列表
-  const getSubjectList = async () => {
+  const getData = async () => {
     try {
-      const res = await getSubjectApi()
-      setSubList(res.data.data.list)
+      const subRes = await getSubjectApi()
+      const paperRes = await getTestPaperList()
+      const userRes = await usersListApi()
+
+      setSubList(subRes.data.data.list)
+      setPaperList(paperRes.data.data.list)
+      setUserList(userRes.data.data.list)
     } catch (e) {
       console.log(e)
     }
   }
 
+  // 获取下拉框中的数据
+
   // 进页面调用
   useEffect(() => {
-    getSubjectList()
+    getData()
   }, [])
+
+  const subOptions = useMemo(() => {
+    return subList?.map(item => {
+      return {
+        value: item._id,
+        label: item.name
+      }
+    })
+  }, [subList])
+
+  const paperOptions = useMemo(() => {
+    // const filPapers = paperList?.filter(v => v.classify === curId)
+    // console.log(filPapers, curId)
+    return paperList?.map(item => {
+      return {
+        label: item.name,
+        value: item._id
+      }
+    })
+  }, [paperList])
+
+  const userOptions = useMemo(() => {
+    return userList?.map(item => {
+      return {
+        label: item.username,
+        value: item._id
+      }
+    })
+  }, [userList])
 
   // 根据参数的变化实时调用
   useEffect(() => {
+    console.log(params)
     getExaminationList()
   }, [params])
+
+  // 编辑考试
+  const upExamination = async () => {
+    try {
+      // const res = await updateExaminationApi(ueParams)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   // 删除选中的考试记录
   const rmExamRecord = async (id: string) => {
@@ -229,19 +296,28 @@ const RecordExam = () => {
     })
   }, [recordList])
 
-  const filterData = async (params: QueryParams) => {
+  const handleOk = async () => {
     try {
-      const res = await getExaminationListApi(params)
-      console.log(res)
+      const values = await form.validateFields()
+      console.log(values)
     } catch (e) {
       console.log(e)
     }
   }
 
+  const handleCancel = () => {
+    form.resetFields()
+    setIsEdit(false)
+  }
+
   return (
     <div className={style.record}>
       {/* 筛选 */}
-      <Filter onSearch={filterData} />
+      <Filter
+        onChangePar={setParams}
+        subOptions={subOptions!}
+        paperOptions={paperOptions!}
+      />
 
       {/* 考试记录 */}
       <Table<ExaminationItem>
@@ -273,7 +349,14 @@ const RecordExam = () => {
           :
           ''
       }
-      
+      <Edit
+        isEdit={isEdit}
+        form={form}
+        subOptions={subOptions!}
+        userOptions={userOptions!}
+        onHandleOk={handleOk}
+        onHandleCancel={handleCancel}
+      />
     </div>
   )
 }

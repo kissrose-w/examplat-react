@@ -36,7 +36,7 @@ export type UserInfo = {
   _id: string
   username: string
   sex: 0 | 1
-  avator: string
+  avatar: string
   email: string
   age: number
   role: string[]
@@ -63,16 +63,14 @@ export type MenuListItem = {
 
 // 查询参数
 export type QueryParams = {
-  page: number,
-  pagesize: number,
+  page?: number,
+  pagesize?: number,
   classify?: string,
-  createAt?: string,
-  creator?: string,
-  startTime?: string,
-  endTime?: number
-  examiner?: string
-  group?: string
-  name?: string
+  startTimeFrom?: string,
+  startTimeTo?: string,
+  name?: string,
+  status?: 0 | 1 | 2,
+  examId?: string
 }
 
 //页数
@@ -88,19 +86,24 @@ export type ExaminationList = {
   totalPage: number
 }
 
+export type BaseItem = {
+  _id: string,
+  name: string
+}
+
 // 考试记录列表项
 export type ExaminationItem = {
-  classify: string
-  createdAt: string
-  creator: string
-  endTime: number
-  examId: string
-  examiner: string[]
-  group: string[]
-  name: string
-  questionsList: QuestionItem[]
-  startTime: number
-  status: number
+  classify: BaseItem,
+  createdAt: string,
+  creator: string,
+  endTime: string,
+  examId: BaseItem,
+  examiner: string[],
+  group: BaseItem[],
+  name: string,
+  questionsList: QuestionItem[],
+  startTime: string,
+  status: 0 | 1 | 2, 
   __v: number
   _id: string
 }
@@ -113,6 +116,17 @@ export type QuestionItem = {
   type: string,
   __v: number,
   _id: string
+}
+
+// 编辑考试参数
+export type UEParams = {
+  _id: string,
+  name?: string,
+  classify?: string,
+  group?: string[],
+  examiner?: string[],
+  startTime?: string,
+  endTime?: string
 }
 
 // 创建考试
@@ -314,3 +328,29 @@ export type CreatQuestion = {
   options: { label: string, value: string }[]
   explanation: string
 }
+
+//学生信息list
+export type StudentItem ={
+  _id: string,
+  username: string,
+  email: string,
+  classId: {
+    _id: string,
+    name: string
+  },
+  sex: 0 | 1,
+  age: number,
+  status: number,
+  createdAt: string,
+  updatedAt: string
+}
+
+//查询学生
+export type StudentList = {
+  total: number,
+  page: number,
+  pagesize: number,
+  totalPage: number,
+  currentPage: number,
+  list: StudentItem[]
+} 
