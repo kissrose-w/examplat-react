@@ -79,8 +79,6 @@ const Avatar = () => {
       await updateUserAvatar(imageUrl)
       
       getBase64(file, (base64Url) => {
-        // setImageUrl(base64Url) // 这里用Base64预览
-        // 或者用服务器返回的URL：setImageUrl(imageUrl)
         setImageUrl(imageUrl || base64Url)
       })
     } catch (error) {
