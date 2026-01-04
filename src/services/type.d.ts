@@ -213,7 +213,7 @@ interface Ques {
 export type TestListItem = {
   _id: string
   name: string
-  classify: string
+  classify: {_id: string, name: string}
   totalScore: number
   duration: number
   difficulty: number

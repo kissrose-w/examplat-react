@@ -1,5 +1,5 @@
 import type { TableColumnsType } from 'antd'
-import type { ClassifyItem, TestListItem } from '@/services/type'
+import type { TestListItem } from '@/services/type'
 import { Space, Button } from 'antd'
 import dayjs from 'dayjs'
 
@@ -8,11 +8,10 @@ interface Props {
   onDelPaper: (id: string) => void
   onLoading: () => void
   setPreviewList: (value: TestListItem) => void
-  classifyList: ClassifyItem[] // 添加科目列表参数
 }
 
 // 定义试卷列表的列配置
-export const columns = ({ onDelPaper, onLoading, setPreviewList, classifyList }: Props): TableColumnsType<TestListItem> => [
+export const columns = ({ onDelPaper, onLoading, setPreviewList }: Props): TableColumnsType<TestListItem> => [
   {
     title: '试卷名称',
     dataIndex: 'name',
@@ -56,11 +55,13 @@ export const columns = ({ onDelPaper, onLoading, setPreviewList, classifyList }:
     key: 'classify',
     width: 250,
     align: 'center',
-    render: (_) => {
-      if (!_) return '--'
-      // 根据_id查找对应的科目名称
-      const classify = classifyList.find(item => item._id === _)
-      return classify ? classify.name : '--'
+    render: (_, record) => {
+      if (!record || !record.classify) {
+        return '--'
+      }
+      
+      // 优先使用label，否则使用value，最后显示--
+      return record.classify.name || record.classify._id || '--'
     }
   },
   {
