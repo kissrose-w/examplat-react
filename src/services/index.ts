@@ -20,10 +20,7 @@ import type {
   TestPaperDetail,
   createTestParams,
   TestCreate,
-<<<<<<< HEAD
-=======
   StudentList,
->>>>>>> zly
   CreateExamination
 } from '@/services/type'
 import request from './request'
