@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { testListInfo } from '@/store/TestPaper'
 import Preview from './components/preview/Preview'
 import Search from './components/search/Search'
+import { createListInfo } from '@/store/CreatePaper'
 
 // 定义表单字段类型
 export interface FormValues {
@@ -21,6 +22,7 @@ const PaperBank = () => {
   const [previewLoading, setPreviewLoading] = useState(true) //预览loading
   const [previewList, setPreviewList] = useState<TestListItem>() //预览数据
   const [allTestPapers, setAllTestPapers] = useState<TestListItem[]>([]) // 所有试卷数据，用于生成完整的搜索选项
+  const { testList: classifyList, getList: getType} = createListInfo() // 所有科目数据，用于生成科目类型名称
   const { loading, total, testList, getList, params } = testListInfo() // 从store中获取数据
   const navigate = useNavigate()
 
@@ -36,16 +38,17 @@ const PaperBank = () => {
   // 只在刚进入路由时调用，获取初始数据
   useEffect(() => {
     getList()
-  }, [getList])
+    getType()
+  }, [getList, getType])
 
   // 在组件加载时获取所有试卷数据，用于生成完整的搜索选项
   useEffect(() => {
     const fetchAllTestPapers = async () => {
       try {
         // 调用API获取所有试卷数据，设置较大的pagesize
-        const res = await getTestPaperList({ page: 1, pagesize: 100 })
+        const res = await getTestPaperList({ page: 1, pagesize: 100 }) // 增加pagesize，确保获取所有试卷
         if (res.data.code === API_CODE.SUCCESS) {
-          console.log(res.data.data.list)
+          console.log('初始化allTestPapers:', res.data.data.list)
           setAllTestPapers(res.data.data.list)
         }
       } catch (e) {
@@ -118,7 +121,7 @@ const PaperBank = () => {
   }
 
   // 点击搜索
-  const onSearch = (validValues: Partial<FormValues>) => {
+  const onSearch = async (validValues: Partial<FormValues>) => {
     // 直接调用getList，传递搜索条件和重置的页码
     getList({
       page: 1,
@@ -126,6 +129,20 @@ const PaperBank = () => {
       classify: validValues.subject, // 映射表单字段到API参数
       creator: validValues.creator
     })
+    
+    // 同时更新allTestPapers，确保获取最新的创建人数据
+    try {
+      const res = await getTestPaperList({ 
+        page: 1, 
+        pagesize: 100 // 增加pagesize，确保获取所有试卷
+      })
+      if (res.data.code === API_CODE.SUCCESS) {
+        console.log('更新allTestPapers:', res.data.data.list)
+        setAllTestPapers(res.data.data.list)
+      }
+    } catch (e) {
+      console.log('更新allTestPapers失败:', e)
+    }
   }
 
   return (
@@ -143,12 +160,14 @@ const PaperBank = () => {
         onLoading={onLoading}
         onDelPaper={onDelPaper}
         setPreviewList={setPreviewList}
+        classifyList={classifyList} // 传递科目列表
       />
       <Preview
         open={open}
         loading={previewLoading}
         onClose={() => setOpen(false)}
         previewList={previewList}
+        classifyList={classifyList}
       />
     </div>
   )

@@ -19,7 +19,7 @@ const Popup: React.FC<Props> = ({ detail, changeShow }) => {
     {
       key: 'classify',
       label: '学科',
-      children: detail.classify,
+      children: detail.classify.name,
     },
     {
       key: 'creator',
@@ -44,7 +44,7 @@ const Popup: React.FC<Props> = ({ detail, changeShow }) => {
     {
       key: 'group',
       label: '考试班级',
-      children: detail.group.length === 0 || detail.group[0] === null ? '— —' : detail.group,
+      children: detail.group.length === 0 || detail.group[0] === null ? '— —' : detail.group.map(v => v.name).join('、'),
     },
   ]
 
@@ -70,7 +70,7 @@ const Popup: React.FC<Props> = ({ detail, changeShow }) => {
             </Space>
             
           }
-          extra={new Date(detail.createTime ? detail.createTime : detail.createdAt).toLocaleString()}
+          extra={new Date(detail.createdAt).toLocaleString()}
           split={responsive ? 'horizontal' : 'vertical'}
           bordered
           className={style.proCard}

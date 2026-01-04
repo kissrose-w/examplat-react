@@ -1,7 +1,7 @@
 import { getTestPaperDetail } from '@/services'
-import type { TestDetailQues, TestListItem } from '@/services/type'
+import type { ClassifyItem, TestDetailQues, TestListItem } from '@/services/type'
 import { Drawer } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import style from './Preview.module.scss'
 
 // 定义Preview组件的Props类型
@@ -10,13 +10,15 @@ interface PreviewProps {
   loading: boolean
   onClose: () => void
   previewList?: TestListItem
+  classifyList: ClassifyItem[]
 }
 
 const Preview: React.FC<PreviewProps> = ({ 
   open, 
   loading, 
   onClose, 
-  previewList 
+  previewList,
+  classifyList 
 }) => {
   const [list, setList] = useState<TestDetailQues[]>()
   // 分类保存不同类型的题目
@@ -25,6 +27,10 @@ const Preview: React.FC<PreviewProps> = ({
   const [multipleQuestions, setMultipleQuestions] = useState<TestDetailQues[]>([])
   const [blankQuestions, setBlankQuestions] = useState<TestDetailQues[]>([])
 
+  const typeList = useMemo(() => {
+    const list = classifyList.find(item => previewList?.classify === item._id)
+    return  list?.name
+  }, [previewList, classifyList])
   
   // 只有当open为true且previewList有值时才打印
   useEffect(() => {
@@ -130,7 +136,7 @@ const Preview: React.FC<PreviewProps> = ({
       {previewList && (
         <>
           <h2>{previewList.name}</h2>
-          <p className={style.subType}>科目类型：{previewList.classify}</p>
+          <p className={style.subType}>科目类型：{typeList}</p>
           <div className={style.des}>
             <p>总分：{previewList.totalScore}</p>
             <p>考试时长：{previewList.duration}分钟</p>

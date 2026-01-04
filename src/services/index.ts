@@ -20,8 +20,9 @@ import type {
   TestPaperDetail,
   createTestParams,
   TestCreate,
-  StudentList,
-  CreateExamination
+  CreateExamination,
+  UEParams,
+  StudentList
 } from '@/services/type'
 import request from './request'
 
@@ -60,6 +61,11 @@ export const getGroupListApi = (params?: QueryParams) => {
 // 获取试卷列表
 export const getExaminationListApi = (params: QueryParams) => {
   return request.get<BaseResponse<ExaminationList>>('/examination/list', {params})
+}
+
+// 编辑考试信息
+export const updateExaminationApi = (params: UEParams) => {
+  return request.post('/examination/update', params)
 }
 
 // 删除考试记录
