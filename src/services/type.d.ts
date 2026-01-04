@@ -274,11 +274,11 @@ export type TestDetailQues = {
   _id: string
   question: string
   type: string
-  score: number
+  score?: number
   classify: string | { _id: string, name: string }
   answer: string
   options: { label: string, value: string, _id: string }[]
-  desc: string
+  desc?: string
   __v: number
 }
 // 试卷详情
