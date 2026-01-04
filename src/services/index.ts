@@ -20,6 +20,10 @@ import type {
   TestPaperDetail,
   createTestParams,
   TestCreate,
+<<<<<<< HEAD
+=======
+  StudentList,
+>>>>>>> zly
   CreateExamination
 } from '@/services/type'
 import request from './request'
@@ -319,4 +323,9 @@ export const getCreatQuestionApi = (params: {
   explanation: string
 }) => {
   return request.post<BaseResponse>('/question/create', params)
+}
+
+//获取学生信息
+export const getStudentsApi = (params: Pages) =>{
+  return request.get<BaseResponse<StudentList>>('/student/list', {params})
 }

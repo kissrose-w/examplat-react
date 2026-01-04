@@ -222,7 +222,6 @@ const CreateCategory = () => {
   const pagination = {
     defaultCurrent: 1,
     total: total,
-    // current: pageInfo.page,
     pageSize: pageInfo.pagesize,
     showSizeChanger: true,
     onChange: (page: number,pagesize: number) => {
