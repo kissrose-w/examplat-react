@@ -59,7 +59,6 @@ const Search:React.FC<Props> = ({onChange, onInpChange, onChangeClassify}) => {
       <Form.Item label="试题搜索" style={{width: 350}}>
         <Flex>
           <Input style={{marginRight: 10}} onChange={e =>onInpChange( e.target.value)}/>
-          <Button color="primary" variant="solid">搜索</Button>
         </Flex>
       </Form.Item>
       <Form.Item label="试题分类" style={{width: 300}}>
