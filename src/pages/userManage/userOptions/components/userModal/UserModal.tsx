@@ -60,8 +60,10 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
   useEffect(() => {
     if(isModalOpen && originInfo && mode === 'edit'){
       initEdit()
+    }else if (isModalOpen && originInfo && mode === 'distribute') {
+      form.setFieldsValue({name: originInfo.name})
     }
-  },[isModalOpen, originInfo, initEdit, mode])
+  },[isModalOpen, originInfo, initEdit, mode, form])
 
   const getRoleList = async() =>{
     try {
@@ -182,6 +184,7 @@ const UserModal:React.FC<Props> = ({onEdit, originInfo, setIsModalOpen, isModalO
                 placeholder="请选择"
                 // onChange={onRoleChange}
                 options={roleList}
+
               />
             </Form.Item>
             <Form.Item {...tailLayout}>

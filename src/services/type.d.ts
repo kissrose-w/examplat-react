@@ -36,7 +36,7 @@ export type UserInfo = {
   _id: string
   username: string
   sex: 0 | 1
-  avator: string
+  avatar: string
   email: string
   age: number
   role: string[]
@@ -174,7 +174,7 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   question: string
   type: 'single' | 'multiple' | 'judge'
   __v: number
@@ -277,7 +277,7 @@ export type TestDetailQues = {
   score: number
   classify: string | { _id: string, name: string }
   answer: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   desc: string
   __v: number
 }

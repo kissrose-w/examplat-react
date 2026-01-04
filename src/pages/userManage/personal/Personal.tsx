@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Avatar from './avatar/Avatar'
 import { useUserStore } from '@/store/userStore'
 import UserModal from './userModal/UserModal'

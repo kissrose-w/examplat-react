@@ -57,6 +57,7 @@ const MenuDrawer: React.FC<Props> = ({open, setOpen, menuList, onGetPermission})
   return (
     <div>
       <Drawer
+        loading={loading}
         title="添加菜单"
         size={720}
         onClose={onClose}
