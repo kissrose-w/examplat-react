@@ -36,7 +36,7 @@ export type UserInfo = {
   _id: string
   username: string
   sex: 0 | 1
-  avator: string
+  avatar: string
   email: string
   age: number
   role: string[]
@@ -64,7 +64,15 @@ export type MenuListItem = {
 // 查询参数
 export type QueryParams = {
   page: number,
-  pagesize: number
+  pagesize: number,
+  classify?: string,
+  createAt?: string,
+  creator?: string,
+  startTime?: string,
+  endTime?: number
+  examiner?: string
+  group?: string
+  name?: string
 }
 
 //页数
@@ -83,7 +91,6 @@ export type ExaminationList = {
 // 考试记录列表项
 export type ExaminationItem = {
   classify: string
-  createTime: number
   createdAt: string
   creator: string
   endTime: number
@@ -153,7 +160,7 @@ export type SubjectCreat = Pick<BaseResponse , 'code'> & {
 export type QuestionData = {
   answer: string
   classify: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   question: string
   type: 'single' | 'multiple' | 'judge'
   __v: number
@@ -256,7 +263,7 @@ export type TestDetailQues = {
   score: number
   classify: string | { _id: string, name: string }
   answer: string
-  options: { label: string, value: string }[]
+  options: { label: string, value: string, _id: string }[]
   desc: string
   __v: number
 }

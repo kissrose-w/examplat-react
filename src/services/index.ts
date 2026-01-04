@@ -19,7 +19,8 @@ import type {
   ClassifyList,
   TestPaperDetail,
   createTestParams,
-  TestCreate
+  TestCreate,
+  CreateExamination
 } from '@/services/type'
 import request from './request'
 
@@ -113,12 +114,14 @@ export type UserCreateParams = {
   email?: string,
   sex?: 0 | 1,
   age?: number,
-  role?: []
+  role?: string[]
 }
 
 export type UserEditParams = UserCreateParams & {
   id : string
   status?: 0 | 1 
+  name?: string
+  avatar?: string
 }
 // 编辑用户
 export const userEditApi = (params: UserEditParams) => {
@@ -128,6 +131,23 @@ export const userEditApi = (params: UserEditParams) => {
 // 创建用户
 export const userCreateApi = (params: UserCreateParams) => {
   return request.post<Omit<Base,'data'>>('/user/create', params)
+}
+export type PhotoResponse = {
+  code: number
+  msg: string
+  data : {
+    url: string
+    filename: string
+    size: string
+  }
+}
+// 上传图片
+export const photoApi = (formData: FormData) => {
+  return request.post<PhotoResponse>('upload/image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 // 查询角色接口

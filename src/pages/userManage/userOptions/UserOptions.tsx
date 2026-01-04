@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { usersListApi, userSDelApi, userEditApi, userCreateApi} from '@/services'
 import UsersList from '../../userManage/userOptions/components/usersList/UsersList'
 import Search from '../../userManage/userOptions/components/search/Search'
@@ -20,7 +20,7 @@ const UserOptions = () => {
     pagesize: 5
   })
   // 获取用户列表
-  const getUsers = async() => {
+  const getUsers = useCallback (async() => {
     try {
       const res = await usersListApi({...params,...searchP})
       // console.log(params)
@@ -30,13 +30,13 @@ const UserOptions = () => {
     } catch (error) {
       console.log(error)
     }
-  }
+  }, [params, searchP])
 
   useEffect(() => {
     Promise.resolve().then(() => {
       getUsers()
     })
-  }, [params, searchP])
+  }, [params, searchP, getUsers])
 
   const CodeEum = {
     SUCCESS: 200,
@@ -101,7 +101,10 @@ const UserOptions = () => {
     }
   }
 
-  const getSearchP = (p) => {
+  const getSearchP = (p: {
+    username: string
+    status: string
+  }) => {
     setSearchP(p)
     setParams({...params, page: 1})
     // getUsers()
