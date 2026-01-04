@@ -20,16 +20,9 @@ import type {
   TestPaperDetail,
   createTestParams,
   TestCreate,
-<<<<<<< HEAD
   CreateExamination,
-  UEParams
-=======
-<<<<<<< HEAD
-=======
-  StudentList,
->>>>>>> zly
-  CreateExamination
->>>>>>> master
+  UEParams,
+  StudentList
 } from '@/services/type'
 import request from './request'
 
