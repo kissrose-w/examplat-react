@@ -103,7 +103,7 @@ const CreateExam = () => {
   }, [groupList])
 
   const paperOptions = useMemo(() => {
-    const filPapers = paperList?.filter(v => v.classify === curId)
+    const filPapers = paperList?.filter(v => v.classify._id === curId)
     console.log(filPapers, curId)
     return filPapers?.map(item => {
       return {
@@ -126,7 +126,13 @@ const CreateExam = () => {
       title: '科目分类',
       dataIndex: 'classify',
       key: 'classify',
-      width: 250
+      width: 250,
+      render: (_: {
+        _id: string,
+        name: string
+      }) => {
+        return _.name
+      }
     },
     {
       title: '试卷创建立人',
@@ -136,8 +142,11 @@ const CreateExam = () => {
     },
     {
       title: '试卷创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (_: string) => {
+        return dayjs(_).format('YYYY-MM-DD HH:mm:ss')
+      }
     }
   ]
 

@@ -29,7 +29,7 @@ const Popup: React.FC<Props> = ({ detail, changeShow }) => {
     {
       key: 'examiner',
       label: '监考员',
-      children: detail.examiner.length !== 0 ? detail.examiner : '— —',
+      children: detail.examiner.length !== 0 ? detail.examiner.join('、') : '— —',
     },
     {
       key: 'startTime',

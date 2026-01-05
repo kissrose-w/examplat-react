@@ -52,7 +52,7 @@ const Filter: React.FC<Props> = ({
       console.log(rest)
       onChangePar(prev => {
         return {
-          page: prev.page,
+          page: 1,
           pagesize: prev.pagesize,
           ...rest,
           startTimeFrom: dayjs(time[0]).format(),
@@ -62,7 +62,7 @@ const Filter: React.FC<Props> = ({
     } else {
       onChangePar(prev => {
         return {
-          page: prev.page,
+          page: 1,
           pagesize: prev.pagesize,
           ...values
         }

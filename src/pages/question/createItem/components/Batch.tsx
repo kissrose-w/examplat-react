@@ -69,7 +69,7 @@ const Batch = () => {
           <Button color="default" variant="dashed">
             重置
           </Button>
-          <a href="/public/templates/question-import-template.xlsx" download="题目批量导入模板.xlsx">
+          <a href="http://10.55.5.77:8001/public/templates/question-import-template.xlsx" download="题目批量导入模板.xlsx">
             下载导入模板
           </a>
         </Space>
