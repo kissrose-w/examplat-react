@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { getExaminationListApi, getSubjectApi, getTestPaperList, removeExamRecordApi, usersListApi, type UsersListResponse } from '@/services'
+import { getExaminationListApi, getGroupListApi, getSubjectApi, getTestPaperList, removeExamRecordApi, updateExaminationApi, usersListApi, type UsersListResponse } from '@/services'
 import React, { useEffect, useMemo, useState } from 'react'
+import dayjs from 'dayjs'
 import style from './record.module.scss'
 import { Button, Flex, Form, message, Table, Tag, type TableColumnsType } from 'antd'
-import type { ExaminationItem, QueryParams, SearchSubjectList, TestListItem } from '@/services/type'
+import type { ExaminationItem, GroupItem, QueryParams, SearchSubjectList, TestListItem } from '@/services/type'
 import Popup from './components/popup/Popup'
-import { API_CODE } from '@/constants'
+import { API_CODE, API_STATUS } from '@/constants'
 import Filter from './components/filter/Filter'
 import type { BaseItem } from '@/services/type'
 import Edit from './components/edit/Edit'
@@ -23,10 +24,13 @@ const RecordExam = () => {
   })
   const [isShow, setIsShow] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
+  const [prohibit, setProhibit] = useState(false)
   const [curExam, setCurExam] = useState<ExaminationItem>()
+  const [curUEId, setCurUEId] = useState<string>()
   const [subList, setSubList] = useState<SearchSubjectList[]>()
   const [paperList, setPaperList] = useState<TestListItem[]>()
   const [userList, setUserList] = useState<UsersListResponse[]>()
+  const [groupList, setGroupList] = useState<GroupItem[]>()
 
   // 每一列的设置
   const columns: TableColumnsType<ExaminationItem> = [
@@ -162,10 +166,21 @@ const RecordExam = () => {
             variant="text"
             onClick={() => {
               console.log(record)
+              setCurUEId(record._id)
               form.setFieldsValue({
                 ...record,
-                classify: record.classify?._id ?? record.classify,
+                classify: record.classify?._id,
+                group: record.group.map(g => g?._id ?? g),
+                dateTime: [
+                  record.startTime ? dayjs(record.startTime) : undefined,
+                  record.endTime ? dayjs(record.endTime) : undefined,
+                ]
               })
+              if(record.status === API_STATUS.NOT_START) {
+                setProhibit(false)
+              } else {
+                setProhibit(true)
+              }
               setIsEdit(true)
             }}
           >编辑</Button>
@@ -209,22 +224,24 @@ const RecordExam = () => {
       const subRes = await getSubjectApi()
       const paperRes = await getTestPaperList()
       const userRes = await usersListApi()
+      const groupRes = await getGroupListApi()
 
       setSubList(subRes.data.data.list)
       setPaperList(paperRes.data.data.list)
       setUserList(userRes.data.data.list)
+      setGroupList(groupRes.data.data.list)
     } catch (e) {
       console.log(e)
     }
   }
 
-  // 获取下拉框中的数据
 
   // 进页面调用
   useEffect(() => {
     getData()
   }, [])
 
+  // 格式化的科目列表
   const subOptions = useMemo(() => {
     return subList?.map(item => {
       return {
@@ -234,6 +251,17 @@ const RecordExam = () => {
     })
   }, [subList])
 
+  // 格式化的班级列表
+  const groupOptions = useMemo(() => {
+    return groupList?.map(item => {
+      return {
+        label: item.name,
+        value: item._id
+      }
+    })
+  }, [groupList])
+
+  // 格式化后的试卷列表
   const paperOptions = useMemo(() => {
     // const filPapers = paperList?.filter(v => v.classify === curId)
     // console.log(filPapers, curId)
@@ -245,6 +273,7 @@ const RecordExam = () => {
     })
   }, [paperList])
 
+  // 格式化的监考人列表
   const userOptions = useMemo(() => {
     return userList?.map(item => {
       return {
@@ -261,13 +290,13 @@ const RecordExam = () => {
   }, [params])
 
   // 编辑考试
-  const upExamination = async () => {
-    try {
-      // const res = await updateExaminationApi(ueParams)
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  // const upExamination = async () => {
+  //   try {
+  //     // const res = await updateExaminationApi(ueParams)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 
   // 删除选中的考试记录
   const rmExamRecord = async (id: string) => {
@@ -296,15 +325,41 @@ const RecordExam = () => {
     })
   }, [recordList])
 
+  // 确定编辑
   const handleOk = async () => {
     try {
       const values = await form.validateFields()
       console.log(values)
+      const {dateTime, ...rest} = values
+      const ueParams = prohibit ? {
+        ...rest,
+        id: curUEId
+      } : {
+        ...rest,
+        id: curUEId,
+        startTime: dayjs(dateTime[0]).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+        endTime: dayjs(dateTime[1]).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+      }
+      console.log(ueParams)
+      const res = await updateExaminationApi(ueParams)
+      console.log(res)
+      if (res.data.code === API_CODE.SUCCESS) {
+        message.success(res.data.msg)
+        setParams({
+          page: 1,
+          pagesize: 5
+        })
+      } else if (res.data.code === API_CODE.PARAMS_ERROR) {
+        message.error(res.data.msg)
+      }
     } catch (e) {
       console.log(e)
+    } finally {
+      setIsEdit(false)
     }
   }
 
+  // 取消编辑
   const handleCancel = () => {
     form.resetFields()
     setIsEdit(false)
@@ -330,6 +385,7 @@ const RecordExam = () => {
         scroll={{ x: 'max-content' }}
         pagination={{
           total,
+          current: params.page,
           pageSize: params.pagesize,
           pageSizeOptions: ['5', '10', '15', '20'],
           showTotal: (total, range) =>
@@ -351,9 +407,11 @@ const RecordExam = () => {
       }
       <Edit
         isEdit={isEdit}
+        prohibit={prohibit}
         form={form}
         subOptions={subOptions!}
         userOptions={userOptions!}
+        groupOptions={groupOptions!}
         onHandleOk={handleOk}
         onHandleCancel={handleCancel}
       />
