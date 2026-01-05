@@ -70,16 +70,27 @@ const PaperBank = () => {
   }, [allTestPapers])
   
   // 科目
-  const subjects = useMemo<string[]>(() => {
-    // 确保allTestPapers是数组且有数据
-    if (Array.isArray(allTestPapers) && allTestPapers.length > 0) {
-      return Array.from(
-        new Set(allTestPapers.map((item: TestListItem) => item.classify))
-      )
+  const subjects = useMemo<{value: string, label: string}[]>(() => {
+    if (!Array.isArray(allTestPapers) || allTestPapers.length === 0) {
+      return []
     }
-    return []
+    
+    // 使用Set获取唯一科目ID，然后映射为所需格式
+    return Array.from(
+      new Set(allTestPapers
+        .filter(item => item.classify) // 过滤掉没有classify的项
+        .map(item => item.classify._id) // 提取科目ID
+      )
+    ).map(id => {
+      // 找到对应的科目信息
+      const classify = allTestPapers.find(item => item.classify?._id === id)?.classify
+      return {
+        value: id,
+        label: classify?.name || ''
+      }
+    })
   }, [allTestPapers])
-
+  
   // 分页
   const pagination = {
     defaultCurrent: 1,
@@ -131,10 +142,14 @@ const PaperBank = () => {
     })
     
     // 同时更新allTestPapers，确保获取最新的创建人数据
+    // 传递搜索条件，确保获取的是过滤后的数据
     try {
       const res = await getTestPaperList({ 
         page: 1, 
-        pagesize: 100 // 增加pagesize，确保获取所有试卷
+        pagesize: 100, // 增加pagesize，确保获取所有试卷
+        name: validValues.name,
+        classify: validValues.subject,
+        creator: validValues.creator
       })
       if (res.data.code === API_CODE.SUCCESS) {
         console.log('更新allTestPapers:', res.data.data.list)
@@ -160,7 +175,7 @@ const PaperBank = () => {
         onLoading={onLoading}
         onDelPaper={onDelPaper}
         setPreviewList={setPreviewList}
-        classifyList={classifyList} // 传递科目列表
+
       />
       <Preview
         open={open}

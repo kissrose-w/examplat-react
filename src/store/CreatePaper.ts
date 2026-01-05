@@ -15,6 +15,7 @@ export const createListInfo = create<State>((set, get) => ({
     try {
       const res = await getClassifyList()
       if (res.data.code === API_CODE.SUCCESS) { 
+        console.log(res)
         set(() => ({testList: res.data.data.list}))
       } else {
         message.error(res.data.msg)

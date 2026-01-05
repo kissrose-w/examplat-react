@@ -1,7 +1,7 @@
 import { columns } from '@/pages/paper/paperBank/columns'
 import { Form, Table, Button, Input, Select, Row, Col } from 'antd'
 import type { FormValues } from '../../PaperBank'
-import type { ClassifyItem, TestListItem } from '@/services/type'
+import type { TestListItem } from '@/services/type'
 
 // 定义分页参数类型
 interface PaginationParams {
@@ -21,14 +21,13 @@ interface PaginationParams {
 interface Props {
   loading: boolean
   creators: string[]
-  subjects: string[]
+  subjects: {value: string, label: string}[]
   currentPageData: TestListItem[]
   onSearch: (validValues: Partial<FormValues>) => void
   onLoading: () => void
   onDelPaper: (id: string) => Promise<void>
   setPreviewList: (value: TestListItem) => void
   pagination: PaginationParams // 添加pagination类型定义
-  classifyList: ClassifyItem[] // 添加科目列表参数
 }
 
 const Search: React.FC<Props> = ({
@@ -40,8 +39,7 @@ const Search: React.FC<Props> = ({
   onLoading,
   onDelPaper,
   setPreviewList,
-  pagination,
-  classifyList
+  pagination
 }) => {
   const [form] = Form.useForm<FormValues>() // 获取form实例
   return (
@@ -81,15 +79,7 @@ const Search: React.FC<Props> = ({
             <Select
               placeholder='请选择'
               allowClear
-              options={ subjects.map(item => {
-                // 查找匹配的科目
-                const classify = classifyList.find(v => item === v._id)
-                // 返回正确的value和label，value为ID，label为名称
-                return {
-                  value: item,
-                  label: classify ? classify.name : item
-                }
-              })}
+              options={subjects}
             />
           </Form.Item>
         </Col>
@@ -97,13 +87,19 @@ const Search: React.FC<Props> = ({
           <Button style={{marginRight: 10}} onClick={() => {
             form.resetFields()
             // 清空搜索条件并重置页码
-            onSearch({})
+            // 传递空对象，确保清空所有搜索条件
+            onSearch({
+              name: undefined,
+              creator: undefined,
+              subject: undefined
+            })
           }}>重置</Button>
           <Button type='primary' onClick={() => {
             // 验证表单，类型从Form.useForm<FormValues>()推断
             form.validateFields().then((values: FormValues) => {
               const validValues = Object.entries(values).reduce((prev: Partial<FormValues>, [key, value]) => {
-                if (value) {
+                // 只过滤掉undefined和null值，保留空字符串
+                if (value !== undefined && value !== null) {
                   prev[key as keyof FormValues] = value
                 }
                 return prev
@@ -117,7 +113,7 @@ const Search: React.FC<Props> = ({
       </Row>
       <Table<TestListItem>
         dataSource={currentPageData}
-        columns={columns({ onDelPaper, onLoading, setPreviewList, classifyList })}
+        columns={columns({ onDelPaper, onLoading, setPreviewList })}
         size='middle'
         pagination={pagination}
         loading={loading}
