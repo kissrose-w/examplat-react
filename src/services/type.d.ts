@@ -241,10 +241,14 @@ interface Ques {
 export type TestListItem = {
   _id: string
   name: string
+<<<<<<< HEAD
   classify: {
     _id: string,
     name: string
   }
+=======
+  classify: {_id: string, name: string}
+>>>>>>> master
   totalScore: number
   duration: number
   difficulty: number
